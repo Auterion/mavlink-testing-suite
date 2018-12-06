@@ -1,0 +1,4 @@
+tests:
+    - name: MissionUpload
+      num_waypoints: 50
+
