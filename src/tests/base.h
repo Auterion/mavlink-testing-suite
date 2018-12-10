@@ -107,6 +107,9 @@ class TestFactory
 public:
 	static TestFactory& instance();
 
+	TestFactory(TestFactory const&) = delete;
+	void operator=(TestFactory const&) = delete;
+
 	/**
 	 * Get an instance of a test based on its name.
 	 * throws out_of_range if test not found */
@@ -117,8 +120,6 @@ private:
 	void registerTest(ITestRegistrar* registrar, const std::string& name);
 
 	TestFactory() = default;
-	TestFactory(TestFactory const&) = delete;
-	void operator=(TestFactory const&) = delete;
 
 	std::map<std::string, ITestRegistrar*> _registry; /**< Holds pointers to test registrars */
 
