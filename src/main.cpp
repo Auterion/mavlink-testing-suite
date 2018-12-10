@@ -6,8 +6,8 @@
 #include <iostream>
 #include <thread>
 
-#include <dronecode_sdk/system.h>
 #include <dronecode_sdk/dronecode_sdk.h>
+#include <dronecode_sdk/system.h>
 
 #include "tests/base.h"
 
@@ -15,17 +15,16 @@ using namespace dronecode_sdk;
 using namespace std::this_thread;
 using namespace std::chrono;
 
-#define ERROR_CONSOLE_TEXT "\033[31m" // Turn text on console red
-#define TELEMETRY_CONSOLE_TEXT "\033[34m" // Turn text on console blue
-#define NORMAL_CONSOLE_TEXT "\033[0m" // Restore normal console colour
+#define ERROR_CONSOLE_TEXT "\033[31m"      // Turn text on console red
+#define TELEMETRY_CONSOLE_TEXT "\033[34m"  // Turn text on console blue
+#define NORMAL_CONSOLE_TEXT "\033[0m"      // Restore normal console colour
 
 void component_discovered(ComponentType component_type)
 {
-	std::cout << NORMAL_CONSOLE_TEXT << "Discovered a component with type "
-			<< unsigned(component_type) << std::endl;
+	std::cout << NORMAL_CONSOLE_TEXT << "Discovered a component with type " << unsigned(component_type) << std::endl;
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 	DronecodeSDK dc;
 	std::string connection_url;
@@ -45,14 +44,13 @@ int main(int argc, char **argv)
 	}
 
 	if (connection_result != ConnectionResult::SUCCESS) {
-		std::cout << ERROR_CONSOLE_TEXT << "Connection failed: "
-				<< connection_result_str(connection_result)
-				<< NORMAL_CONSOLE_TEXT << std::endl;
+		std::cout << ERROR_CONSOLE_TEXT << "Connection failed: " << connection_result_str(connection_result)
+		          << NORMAL_CONSOLE_TEXT << std::endl;
 		return 1;
 	}
 
 	// TODO: connect & identify system based on sysid
-	System &system = dc.system();
+	System& system = dc.system();
 
 	std::cout << "Waiting to discover system..." << std::endl;
 	dc.register_on_discover([&discovered_system](uint64_t uuid) {
@@ -65,8 +63,7 @@ int main(int argc, char **argv)
 	sleep_for(seconds(2));
 
 	if (!discovered_system) {
-		std::cout << ERROR_CONSOLE_TEXT << "No system found, exiting."
-				<< NORMAL_CONSOLE_TEXT << std::endl;
+		std::cout << ERROR_CONSOLE_TEXT << "No system found, exiting." << NORMAL_CONSOLE_TEXT << std::endl;
 		return 1;
 	}
 
@@ -77,8 +74,7 @@ int main(int argc, char **argv)
 	YAML::Node tests_node = config["tests"];
 
 	// Run the test(s)
-	tests::Context
-	context { .system = system };
+	tests::Context context{.system = system};
 	bool failed = false;
 	for (auto test_node : tests_node) {
 		std::string test_name = test_node["name"].as<std::string>();
@@ -98,6 +94,5 @@ int main(int argc, char **argv)
 			failed = true;
 	}
 
-    return failed ? -1 : 0;
+	return failed ? -1 : 0;
 }
-

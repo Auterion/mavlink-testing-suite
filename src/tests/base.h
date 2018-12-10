@@ -3,12 +3,12 @@
 #include <dronecode_sdk/system.h>
 #include <yaml-cpp/yaml.h>
 
-#include <string>
 #include <map>
 #include <memory>
+#include <string>
 
-namespace tests {
-
+namespace tests
+{
 /**
  * @struct Context
  * Data that is supplied to each test
@@ -18,7 +18,6 @@ struct Context {
 	// TODO: logging, ...
 };
 
-
 // use YAML as config backend
 using ConfigNode = YAML::Node;
 
@@ -26,12 +25,14 @@ using ConfigNode = YAML::Node;
  * @class ConfigProvider
  * Stores or retrieves configuration data to/from a ConfigNode (abstracts YAML backend)
  */
-class ConfigProvider {
+class ConfigProvider
+{
 public:
 	ConfigProvider(ConfigNode& config, bool store_config);
 
-	template<typename T>
-	void operator()(const std::string& config_name, T& value) {
+	template <typename T>
+	void operator()(const std::string& config_name, T& value)
+	{
 		if (_store_config) {
 			_config[config_name] = value;
 		} else {
@@ -39,23 +40,20 @@ public:
 				value = _config[config_name].as<T>();
 		}
 	}
+
 private:
 	ConfigNode& _config;
-	const bool _store_config; ///< if true, store config in _config, else load from _config
+	const bool _store_config;  ///< if true, store config in _config, else load from _config
 };
-
 
 /**
  * @class TestBase
  * Base class for all tests
  */
-class TestBase {
+class TestBase
+{
 public:
-	enum class Result {
-		Success = 0,
-		Failed,
-		Timeout
-	};
+	enum class Result { Success = 0, Failed, Timeout };
 
 	TestBase(const Context& context);
 	virtual ~TestBase() = default;
@@ -77,15 +75,14 @@ protected:
 	Context _context;
 };
 
-
 inline const char* toString(TestBase::Result result)
 {
-    switch (result) {
-        case TestBase::Result::Success:  return "Success";
-        case TestBase::Result::Failed:   return "Failed";
-        case TestBase::Result::Timeout:  return "Timeout";
-    }
-    return "Unknown";
+	switch (result) {
+		case TestBase::Result::Success: return "Success";
+		case TestBase::Result::Failed: return "Failed";
+		case TestBase::Result::Timeout: return "Timeout";
+	}
+	return "Unknown";
 }
 
 /* registering tests helper classes */
@@ -94,7 +91,8 @@ inline const char* toString(TestBase::Result result)
  * Base class for TestRegistrar
  * See TestRegistrar below for explanations
  */
-class ITestRegistrar {
+class ITestRegistrar
+{
 public:
 	virtual std::unique_ptr<TestBase> getTest(Context& context) = 0;
 };
@@ -104,7 +102,8 @@ public:
  * Tests registers themselves here and the factory can serve them on demand.
  * It is a Singleton.
  */
-class TestFactory {
+class TestFactory
+{
 public:
 	static TestFactory& instance();
 
@@ -123,39 +122,41 @@ private:
 
 	std::map<std::string, ITestRegistrar*> _registry; /**< Holds pointers to test registrars */
 
-	template<typename TTest>
+	template <typename TTest>
 	friend class TestRegistrar;
 };
 
 /**
  * Helper class that registers a test upon construction.
  */
-template<class TTest>
-class TestRegistrar: public ITestRegistrar {
+template <class TTest>
+class TestRegistrar : public ITestRegistrar
+{
 public:
 	TestRegistrar(const std::string& classname);
 	std::unique_ptr<TestBase> getTest(Context& context) override;
+
 private:
 	std::string _classname;
 };
 
-
-template<class TTest>
-TestRegistrar<TTest>::TestRegistrar(const std::string& classname)
-	: _classname(classname) {
+template <class TTest>
+TestRegistrar<TTest>::TestRegistrar(const std::string& classname) : _classname(classname)
+{
 	TestFactory& factory = TestFactory::instance();
 	factory.registerTest(this, classname);
 }
 
-template<class TTest>
+template <class TTest>
 std::unique_ptr<TestBase> TestRegistrar<TTest>::getTest(Context& context)
 {
 	return std::unique_ptr<TTest>(new TTest(context));
 }
 
-#define REGISTER_TEST(CLASSNAME) \
-    namespace { \
-        static TestRegistrar<CLASSNAME> CLASSNAME##_registrar( #CLASSNAME ); \
-    };
+#define REGISTER_TEST(CLASSNAME)                                       \
+	namespace                                                          \
+	{                                                                  \
+	static TestRegistrar<CLASSNAME> CLASSNAME##_registrar(#CLASSNAME); \
+	};
 
-} // namespace tests
+}  // namespace tests

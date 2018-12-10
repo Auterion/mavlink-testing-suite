@@ -1,12 +1,9 @@
 
 #include "base.h"
 
-namespace tests {
-
-ConfigProvider::ConfigProvider(ConfigNode& config, bool store_config)
-	: _config(config), _store_config(store_config)
+namespace tests
 {
-}
+ConfigProvider::ConfigProvider(ConfigNode& config, bool store_config) : _config(config), _store_config(store_config) {}
 
 void TestBase::loadConfig(ConfigNode& config)
 {
@@ -20,21 +17,17 @@ void TestBase::storeConfig(ConfigNode& config)
 	serialize(provider);
 }
 
-TestBase::TestBase(const Context& context)
-	: _context(context)
-{
-}
-
+TestBase::TestBase(const Context& context) : _context(context) {}
 
 TestFactory& TestFactory::instance()
 {
-    static TestFactory instance;
-    return instance;
+	static TestFactory instance;
+	return instance;
 }
 
-void TestFactory::registerTest(ITestRegistrar * registrar, const std::string& name)
+void TestFactory::registerTest(ITestRegistrar* registrar, const std::string& name)
 {
-    _registry[name] = registrar;
+	_registry[name] = registrar;
 }
 
 std::unique_ptr<TestBase> TestFactory::getTest(const std::string& name, Context& context)
@@ -46,5 +39,4 @@ std::unique_ptr<TestBase> TestFactory::getTest(const std::string& name, Context&
 	return find->second->getTest(context);
 }
 
-} // namespace tests
-
+}  // namespace tests
