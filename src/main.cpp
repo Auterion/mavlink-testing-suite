@@ -19,7 +19,7 @@ using namespace std::chrono;
 #define TELEMETRY_CONSOLE_TEXT "\033[34m"  // Turn text on console blue
 #define NORMAL_CONSOLE_TEXT "\033[0m"      // Restore normal console colour
 
-void component_discovered(ComponentType component_type)
+void componentDiscovered(ComponentType component_type)
 {
 	std::cout << NORMAL_CONSOLE_TEXT << "Discovered a component with type " << unsigned(component_type) << std::endl;
 }
@@ -67,7 +67,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	system.register_component_discovered_callback(component_discovered);
+	system.register_component_discovered_callback(componentDiscovered);
 
 	// load config
 	YAML::Node config = YAML::LoadFile("../config/autopilot.yaml");
