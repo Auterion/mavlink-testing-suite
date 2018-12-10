@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 2.8.12)
 
-## Specify your project's name
 project(mavlink-testing-suite C CXX)
+
+# required for clang-tidy
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(Git)
 
@@ -76,12 +78,24 @@ find_program(CLANG_FORMAT_EXECUTABLE
 	DOC "clang-format executable"
 )
 
+file(GLOB_RECURSE MAVLINK_SUITE_FORMAT_SRCS
+	src/*.h src/*.cpp)
 if (CLANG_FORMAT_EXECUTABLE)
 	message(STATUS "Enabling format target")
-	file(
-		GLOB_RECURSE SUITE_FORMAT_SRCS
-		src/*.h src/*.cpp)
 
 	add_custom_target(
-		format ${CLANG_FORMAT_EXECUTABLE} -style=file -i ${SUITE_FORMAT_SRCS})
+		format ${CLANG_FORMAT_EXECUTABLE} -style=file -i ${MAVLINK_SUITE_FORMAT_SRCS})
+endif()
+
+find_program(CLANG_TIDY_EXECUTABLE
+	NAMES clang-tidy clang-tidy-5.0
+		clang-tidy-4.0 clang-tidy-3.9
+		clang-tidy-3.8 clang-tidy-3.7
+		clang-tidy-3.6 clang-tidy-3.5
+		clang-tidy-3.4 clang-tidy-3.3
+	DOC "clang-tidy executable"
+)
+if (CLANG_TIDY_EXECUTABLE)
+	add_custom_target(
+		clang_tidy ${CLANG_TIDY_EXECUTABLE} -fix -header-filter="${CMAKE_CURRENT_LIST_DIR}/src/.*\\.[hpp|h]" -p ${CMAKE_CURRENT_BINARY_DIR} ${MAVLINK_SUITE_FORMAT_SRCS})
 endif()
