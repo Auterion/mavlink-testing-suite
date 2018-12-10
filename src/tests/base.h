@@ -55,7 +55,7 @@ class TestBase
 public:
 	enum class Result { Success = 0, Failed, Timeout };
 
-	TestBase(const Context& context);
+	explicit TestBase(const Context& context);
 	virtual ~TestBase() = default;
 
 	void loadConfig(ConfigNode& config);
@@ -133,7 +133,7 @@ template <class TTest>
 class TestRegistrar : public ITestRegistrar
 {
 public:
-	TestRegistrar(const std::string& classname);
+	explicit TestRegistrar(const std::string& classname);
 	std::unique_ptr<TestBase> getTest(Context& context) override;
 
 private:

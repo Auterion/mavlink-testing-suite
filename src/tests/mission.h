@@ -20,8 +20,8 @@ public:
 		void serialize(ConfigProvider& c) { c("num_waypoints", num_waypoints); }
 	};
 
-	MissionUpload(const Context& context);
-	virtual ~MissionUpload() = default;
+	explicit MissionUpload(const Context& context);
+	~MissionUpload() override = default;
 
 	Result run() override;
 
