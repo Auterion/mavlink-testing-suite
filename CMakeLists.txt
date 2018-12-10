@@ -1,7 +1,24 @@
 cmake_minimum_required(VERSION 2.8.12)
 
 ## Specify your project's name
-project(mavlink-testing-suite)
+project(mavlink-testing-suite C CXX)
+
+find_package(Git)
+
+if (GIT_FOUND)
+	execute_process(
+		COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
+		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+		OUTPUT_VARIABLE SUITE_VERSION_GIT_REVISION
+		OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+	message(STATUS "Building in git revision ${SUITE_VERSION_GIT_REVISION}")
+	# TODO: build into binary
+else()
+	set(SUITE_VERSION_GIT_REVISION "n/a")
+	message(STATUS "Executable git is missing, choosing default value for git revision")
+endif()
+string(TIMESTAMP SUITE_VERSION_BUILD_TIMESTAMP "%Y-%m-%dT%H:%M:%S.000000Z" UTC)
 
 # Specify at least C++11
 set(CMAKE_CXX_STANDARD 11)
