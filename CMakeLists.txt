@@ -67,3 +67,21 @@ target_link_libraries(mavlink_testing_suite
 	${CMAKE_CURRENT_BINARY_DIR}/build_yaml/libyaml-cpp.a
 )
 
+find_program(CLANG_FORMAT_EXECUTABLE
+	NAMES clang-format clang-format-5.0
+		clang-format-4.0 clang-format-3.9
+		clang-format-3.8 clang-format-3.7
+		clang-format-3.6 clang-format-3.5
+		clang-format-3.4 clang-format-3.3
+	DOC "clang-format executable"
+)
+
+if (CLANG_FORMAT_EXECUTABLE)
+	message(STATUS "Enabling format target")
+	file(
+		GLOB_RECURSE SUITE_FORMAT_SRCS
+		src/*.h src/*.cpp)
+
+	add_custom_target(
+		format ${CLANG_FORMAT_EXECUTABLE} -style=file -i ${SUITE_FORMAT_SRCS})
+endif()
