@@ -39,6 +39,4 @@ private:
 	Config _config;
 };
 
-REGISTER_TEST(MissionUpload);
-
 }  // namespace tests

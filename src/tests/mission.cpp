@@ -10,6 +10,8 @@ using namespace dronecode_sdk;
 
 namespace tests
 {
+REGISTER_TEST(MissionUpload);
+
 MissionUpload::MissionUpload(const Context& context) : TestBase(context), _mission(context.system) {}
 
 shared_ptr<MissionItem> MissionUpload::makeMissionItem(double latitude_deg, double longitude_deg,
