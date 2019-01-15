@@ -49,8 +49,6 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	// TODO: connect & identify system based on sysid
-	System& system = dc.system();
 
 	std::cout << "Waiting to discover system..." << std::endl;
 	dc.register_on_discover([&discovered_system](uint64_t uuid) {
@@ -67,6 +65,8 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
+	// TODO: connect & identify system based on sysid
+	System& system = dc.system();
 	system.register_component_discovered_callback(componentDiscovered);
 
 	// load config
