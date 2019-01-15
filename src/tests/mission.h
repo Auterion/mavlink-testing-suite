@@ -30,10 +30,7 @@ protected:
 
 private:
 	std::shared_ptr<dronecode_sdk::MissionItem> makeMissionItem(double latitude_deg, double longitude_deg,
-	                                                            float relative_altitude_m, float speed_m_s,
-	                                                            bool is_fly_through, float gimbal_pitch_deg,
-	                                                            float gimbal_yaw_deg,
-	                                                            dronecode_sdk::MissionItem::CameraAction camera_action);
+	                                                            float relative_altitude_m);
 
 	dronecode_sdk::Mission _mission;
 	Config _config;

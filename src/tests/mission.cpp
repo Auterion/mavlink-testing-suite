@@ -15,44 +15,25 @@ REGISTER_TEST(MissionUpload);
 MissionUpload::MissionUpload(const Context& context) : TestBase(context), _mission(context.system) {}
 
 shared_ptr<MissionItem> MissionUpload::makeMissionItem(double latitude_deg, double longitude_deg,
-                                                       float relative_altitude_m, float speed_m_s, bool is_fly_through,
-                                                       float gimbal_pitch_deg, float gimbal_yaw_deg,
-                                                       MissionItem::CameraAction camera_action)
+                                                       float relative_altitude_m)
 {
 	shared_ptr<MissionItem> new_item = make_shared<MissionItem>();
 	new_item->set_position(latitude_deg, longitude_deg);
 	new_item->set_relative_altitude(relative_altitude_m);
-	new_item->set_speed(speed_m_s);
-	new_item->set_fly_through(is_fly_through);
-	new_item->set_gimbal_pitch_and_yaw(gimbal_pitch_deg, gimbal_yaw_deg);
-	new_item->set_camera_action(camera_action);
 	return new_item;
 }
 
 TestBase::Result MissionUpload::run()
 {
-	// TODO: use configuration
-	cout << "number of waypoints: " << _config.num_waypoints << endl;
+	cout << "Number of waypoints: " << _config.num_waypoints << endl;
 
 	vector<shared_ptr<MissionItem>> mission_items;
 
-	mission_items.push_back(makeMissionItem(47.398170327054473, 8.5456490218639658, 10.0f, 5.0f, false, 20.0f, 60.0f,
-	                                        MissionItem::CameraAction::NONE));
-
-	mission_items.push_back(makeMissionItem(47.398241338125118, 8.5455360114574432, 10.0f, 2.0f, true, 0.0f, -60.0f,
-	                                        MissionItem::CameraAction::TAKE_PHOTO));
-
-	mission_items.push_back(makeMissionItem(47.398139363821485, 8.5453846156597137, 10.0f, 5.0f, true, -45.0f, 0.0f,
-	                                        MissionItem::CameraAction::START_VIDEO));
-
-	mission_items.push_back(makeMissionItem(47.398058617228855, 8.5454618036746979, 10.0f, 2.0f, false, -90.0f, 30.0f,
-	                                        MissionItem::CameraAction::STOP_VIDEO));
-
-	mission_items.push_back(makeMissionItem(47.398100366082858, 8.5456969141960144, 10.0f, 5.0f, false, -45.0f, -30.0f,
-	                                        MissionItem::CameraAction::START_PHOTO_INTERVAL));
-
-	mission_items.push_back(makeMissionItem(47.398001890458097, 8.5455576181411743, 10.0f, 5.0f, false, 0.0f, 0.0f,
-	                                        MissionItem::CameraAction::STOP_PHOTO_INTERVAL));
+	for (int i = 0; i < _config.num_waypoints; ++i) {
+		float altitude = 10.f + (float)i;
+		double latitude = 47.398170327054473 + (double)i * 1e-5;
+		mission_items.push_back(makeMissionItem(latitude, 8.5456490218639658, altitude));
+	}
 
 	cout << "Uploading mission..." << endl;
 	auto prom = make_shared<promise<Mission::Result>>();
