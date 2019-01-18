@@ -2,3 +2,7 @@ tests:
     - name: MissionUpload
       num_waypoints: 50
 
+    - name: ParamChange
+      param_name: SYS_HITL
+      param_set_value: 1
+      param_reset_value: 0

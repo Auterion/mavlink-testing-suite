@@ -58,14 +58,15 @@ add_executable(mavlink_testing_suite
 
     src/tests/base.cpp
     src/tests/mission.cpp
+    src/tests/param.cpp
 )
 add_dependencies(mavlink_testing_suite yaml)
 
 target_link_libraries(mavlink_testing_suite
     dronecode_sdk
     dronecode_sdk_action
-    dronecode_sdk_telemetry
 	dronecode_sdk_mission
+	dronecode_sdk_params_raw
 	${CMAKE_CURRENT_BINARY_DIR}/build_yaml/libyaml-cpp.a
 )
 

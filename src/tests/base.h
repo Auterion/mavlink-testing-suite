@@ -53,7 +53,7 @@ private:
 class TestBase
 {
 public:
-	enum class Result { Success = 0, Failed, Timeout };
+	enum class Result { Success = 0, Failed, Timeout, NotImplemented };
 
 	explicit TestBase(const Context& context);
 	virtual ~TestBase() = default;
@@ -81,6 +81,7 @@ inline const char* toString(TestBase::Result result)
 		case TestBase::Result::Success: return "Success";
 		case TestBase::Result::Failed: return "Failed";
 		case TestBase::Result::Timeout: return "Timeout";
+		case TestBase::Result::NotImplemented: return "Not implemented";
 	}
 	return "Unknown";
 }

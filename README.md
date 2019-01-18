@@ -75,6 +75,11 @@ Uploading mission...
 [10:56:56|Info ] Mission accepted (mission_impl.cpp:163)
 Mission uploaded.
 MissionUpload test result: Success
+Setting param SYS_HITL to 1
+Checking param SYS_HITL is 1
+Setting param SYS_HITL to 0
+Checking param SYS_HITL is 0
+ParamChange test result: Success
 ```
 
 And an unsuccessful run, where handling of `MISSION_COUNT` on the autopilot is
