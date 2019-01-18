@@ -7,7 +7,6 @@
 #include <thread>
 
 #include <dronecode_sdk/dronecode_sdk.h>
-#include <dronecode_sdk/system.h>
 
 #include "tests/base.h"
 

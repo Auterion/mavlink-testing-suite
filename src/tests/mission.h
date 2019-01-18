@@ -2,8 +2,8 @@
 
 #include "base.h"
 
-#include <dronecode_sdk/mission.h>
-#include <dronecode_sdk/system.h>
+#include <dronecode_sdk/dronecode_sdk.h>
+#include <dronecode_sdk/plugins/mission/mission.h>
 
 namespace tests
 {
