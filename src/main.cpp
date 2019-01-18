@@ -48,7 +48,6 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-
 	std::cout << "Waiting to discover system..." << std::endl;
 	dc.register_on_discover([&discovered_system](uint64_t uuid) {
 		std::cout << "Discovered system with UUID: " << uuid << std::endl;
