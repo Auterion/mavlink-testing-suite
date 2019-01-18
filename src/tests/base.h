@@ -1,6 +1,6 @@
 #pragma once
 
-#include <dronecode_sdk/system.h>
+#include <dronecode_sdk/dronecode_sdk.h>
 #include <yaml-cpp/yaml.h>
 
 #include <map>
