@@ -15,12 +15,14 @@ class ParamChange : public TestBase
 {
 public:
 	struct Config {
+		std::string name {};
 		int set_value{0};
 		int reset_value{0};
 
 		void serialize(ConfigProvider& c) {
-			c("set_value", set_value);
-			c("reset_value", reset_value);
+			c("param_name", name);
+			c("param_set_value", set_value);
+			c("param_reset_value", reset_value);
 		}
 	};
 
