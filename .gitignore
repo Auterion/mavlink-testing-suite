@@ -1,4 +1,9 @@
+
+/DronecodeSDK
+/DronecodeSDK-install
+
 /build
+/build_ci
 *~
 .context
 .cproject
