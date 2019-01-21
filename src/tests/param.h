@@ -14,30 +14,30 @@ namespace tests
 class ParamChange : public TestBase
 {
 public:
-	struct Config {
-		std::string name{};
-		int set_value{0};
-		int reset_value{0};
+    struct Config {
+        std::string name{};
+        int set_value{0};
+        int reset_value{0};
 
-		void serialize(ConfigProvider& c)
-		{
-			c("param_name", name);
-			c("param_set_value", set_value);
-			c("param_reset_value", reset_value);
-		}
-	};
+        void serialize(ConfigProvider& c)
+        {
+            c("param_name", name);
+            c("param_set_value", set_value);
+            c("param_reset_value", reset_value);
+        }
+    };
 
-	explicit ParamChange(const Context& context);
-	~ParamChange() override = default;
+    explicit ParamChange(const Context& context);
+    ~ParamChange() override = default;
 
-	Result run() override;
+    Result run() override;
 
 protected:
-	void serialize(ConfigProvider& c) override { _config.serialize(c); }
+    void serialize(ConfigProvider& c) override { _config.serialize(c); }
 
 private:
-	dronecode_sdk::ParamsRaw _params_raw;
-	Config _config;
+    dronecode_sdk::ParamsRaw _params_raw;
+    Config _config;
 };
 
 }  // namespace tests

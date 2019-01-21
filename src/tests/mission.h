@@ -14,26 +14,26 @@ namespace tests
 class MissionUpload : public TestBase
 {
 public:
-	struct Config {
-		int num_waypoints{10};
+    struct Config {
+        int num_waypoints{10};
 
-		void serialize(ConfigProvider& c) { c("num_waypoints", num_waypoints); }
-	};
+        void serialize(ConfigProvider& c) { c("num_waypoints", num_waypoints); }
+    };
 
-	explicit MissionUpload(const Context& context);
-	~MissionUpload() override = default;
+    explicit MissionUpload(const Context& context);
+    ~MissionUpload() override = default;
 
-	Result run() override;
+    Result run() override;
 
 protected:
-	void serialize(ConfigProvider& c) override { _config.serialize(c); }
+    void serialize(ConfigProvider& c) override { _config.serialize(c); }
 
 private:
-	std::shared_ptr<dronecode_sdk::MissionItem> makeMissionItem(double latitude_deg, double longitude_deg,
-	                                                            float relative_altitude_m);
+    std::shared_ptr<dronecode_sdk::MissionItem> makeMissionItem(double latitude_deg, double longitude_deg,
+                                                                float relative_altitude_m);
 
-	dronecode_sdk::Mission _mission;
-	Config _config;
+    dronecode_sdk::Mission _mission;
+    Config _config;
 };
 
 }  // namespace tests
