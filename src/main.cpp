@@ -20,7 +20,8 @@ using namespace std::chrono;
 
 void componentDiscovered(ComponentType component_type)
 {
-    std::cout << NORMAL_CONSOLE_TEXT << "Discovered a component with type " << unsigned(component_type) << std::endl;
+    std::cout << NORMAL_CONSOLE_TEXT << "Discovered a component with type "
+              << unsigned(component_type) << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -43,7 +44,8 @@ int main(int argc, char** argv)
     }
 
     if (connection_result != ConnectionResult::SUCCESS) {
-        std::cout << ERROR_CONSOLE_TEXT << "Connection failed: " << connection_result_str(connection_result)
+        std::cout << ERROR_CONSOLE_TEXT
+                  << "Connection failed: " << connection_result_str(connection_result)
                   << NORMAL_CONSOLE_TEXT << std::endl;
         return 1;
     }
@@ -59,7 +61,8 @@ int main(int argc, char** argv)
     sleep_for(seconds(2));
 
     if (!discovered_system) {
-        std::cout << ERROR_CONSOLE_TEXT << "No system found, exiting." << NORMAL_CONSOLE_TEXT << std::endl;
+        std::cout << ERROR_CONSOLE_TEXT << "No system found, exiting." << NORMAL_CONSOLE_TEXT
+                  << std::endl;
         return 1;
     }
 
@@ -76,7 +79,8 @@ int main(int argc, char** argv)
     bool failed = false;
     for (auto test_node : tests_node) {
         std::string test_name = test_node["name"].as<std::string>();
-        std::unique_ptr<tests::TestBase> test = tests::TestFactory::instance().getTest(test_name, context);
+        std::unique_ptr<tests::TestBase> test =
+            tests::TestFactory::instance().getTest(test_name, context);
 
         test->loadConfig(test_node);
 

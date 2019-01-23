@@ -3,7 +3,10 @@
 
 namespace tests
 {
-ConfigProvider::ConfigProvider(ConfigNode& config, bool store_config) : _config(config), _store_config(store_config) {}
+ConfigProvider::ConfigProvider(ConfigNode& config, bool store_config)
+    : _config(config), _store_config(store_config)
+{
+}
 
 void TestBase::loadConfig(ConfigNode& config)
 {

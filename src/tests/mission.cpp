@@ -55,12 +55,14 @@ void Mission::uploadMission(const mission_items& items)
     promise<dcsdk::Mission::Result> prom{};
     auto fut = prom.get_future();
 
-    _mission.upload_mission_async(items, [&prom](dcsdk::Mission::Result result) { prom.set_value(result); });
+    _mission.upload_mission_async(
+        items, [&prom](dcsdk::Mission::Result result) { prom.set_value(result); });
 
     // wait until uploaded
     const dcsdk::Mission::Result result = fut.get();
     if (result != dcsdk::Mission::Result::SUCCESS) {
-        cout << "Mission upload failed (" << dcsdk::Mission::result_str(result) << "), exiting." << endl;
+        cout << "Mission upload failed (" << dcsdk::Mission::result_str(result) << "), exiting."
+             << endl;
         // TODO: we need a mechanism to fail.
         // return Result::Failed;
     }
@@ -73,8 +75,9 @@ mission_items Mission::downloadMission()
     promise<pair<dcsdk::Mission::Result, mission_items>> prom{};
     auto fut = prom.get_future();
 
-    _mission.download_mission_async(
-        [&prom](dcsdk::Mission::Result result, mission_items items) { prom.set_value(make_pair<>(result, items)); });
+    _mission.download_mission_async([&prom](dcsdk::Mission::Result result, mission_items items) {
+        prom.set_value(make_pair<>(result, items));
+    });
 
     auto value = fut.get();
     const dcsdk::Mission::Result& result = value.first;
@@ -82,7 +85,8 @@ mission_items Mission::downloadMission()
 
     // wait until uploaded
     if (result != dcsdk::Mission::Result::SUCCESS) {
-        cout << "Mission upload failed (" << dcsdk::Mission::result_str(fut.get().first) << "), exiting." << endl;
+        cout << "Mission upload failed (" << dcsdk::Mission::result_str(fut.get().first)
+             << "), exiting." << endl;
         // TODO: we need a mechanism to fail.
         // return Result::Failed;
     }
