@@ -46,7 +46,7 @@ mission_items Mission::assembleMissionItems()
         items.push_back(makeMissionItem(latitude, 8.5456490218639658, altitude));
     }
 
-    return std::move(items);
+    return items;
 }
 
 void Mission::uploadMission(const mission_items& items)
@@ -76,7 +76,7 @@ mission_items Mission::downloadMission()
     auto fut = prom.get_future();
 
     _mission.download_mission_async([&prom](dcsdk::Mission::Result result, mission_items items) {
-        prom.set_value(make_pair<>(result, items));
+        prom.set_value(make_pair(result, items));
     });
 
     auto value = fut.get();
