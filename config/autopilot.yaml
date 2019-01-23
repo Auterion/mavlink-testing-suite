@@ -1,5 +1,5 @@
 tests:
-    - name: MissionUpload
+    - name: Mission
       num_waypoints: 50
 
     - name: ParamChange

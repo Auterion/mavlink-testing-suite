@@ -8,10 +8,10 @@
 namespace tests
 {
 /**
- * @class MissionUpload
+ * @class Mission
  * Test Mission Upload
  */
-class MissionUpload : public TestBase
+class Mission : public TestBase
 {
 public:
     struct Config {
@@ -20,8 +20,8 @@ public:
         void serialize(ConfigProvider& c) { c("num_waypoints", num_waypoints); }
     };
 
-    explicit MissionUpload(const Context& context);
-    ~MissionUpload() override = default;
+    explicit Mission(const Context& context);
+    ~Mission() override = default;
 
     Result run() override;
 
