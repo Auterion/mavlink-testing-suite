@@ -97,11 +97,18 @@ mission_items Mission::downloadMission()
 
 void Mission::compareMissions(const mission_items& items_a, const mission_items& items_b)
 {
-    UNUSED(items_a);
-    UNUSED(items_b);
-    cout << "Not comparing missions yet" << endl;
-    // TODO: Compare mission items but we need something like gtest for this.
-    //       Also, it would be nice to use == on a MissionItem.
+    if (items_a.size() != items_b.size()) {
+        cout << "item count is different!" << endl;
+        return;
+    }
+
+    for (unsigned i = 0; i < items_a.size(); ++i) {
+        if (!(*(items_a[i]) == *(items_b[i]))) {
+            cout << "item " << i << " is different!" << endl;
+        }
+    }
+
+    // TODO: We need something like gtest for this.
 }
 
 }  // namespace tests
