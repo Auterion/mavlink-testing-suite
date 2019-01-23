@@ -85,7 +85,7 @@ if (CLANG_FORMAT_EXECUTABLE)
 	message(STATUS "Enabling format target")
 
 	add_custom_target(
-		format ${CLANG_FORMAT_EXECUTABLE} -style=file -i ${MAVLINK_SUITE_FORMAT_SRCS})
+        format ${CMAKE_CURRENT_SOURCE_DIR}/tools/run_clang_format.sh ${CLANG_FORMAT_EXECUTABLE} ${MAVLINK_SUITE_FORMAT_SRCS})
 endif()
 
 find_program(CLANG_TIDY_EXECUTABLE
