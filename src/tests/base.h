@@ -7,6 +7,8 @@
 #include <memory>
 #include <string>
 
+#define UNUSED(x) (void)(x)
+
 namespace tests
 {
 /**
