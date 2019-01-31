@@ -84,9 +84,10 @@ int main(int argc, char** argv)
 
         test->loadConfig(test_node);
 
-        tests::TestBase::Result result = test->run();
+        test->run();
+        tests::TestBase::Result result = test->getResult();
 
-        std::cout << test_name << " test result: " << toString(result) << std::endl;
+        std::cout << test_name << " test result: " << result << std::endl;
 
         // store the actually used config (which includes the default values) back
         // in the YAML config node

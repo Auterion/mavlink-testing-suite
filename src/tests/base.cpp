@@ -22,6 +22,28 @@ void TestBase::storeConfig(ConfigNode& config)
 
 TestBase::TestBase(const Context& context) : _context(context) {}
 
+std::string TestBase::extractFilename(const std::string& path)
+{
+    std::stringstream ss(path);
+    std::string token;
+    while (std::getline(ss, token, '/'))
+        ;
+    return token;
+}
+
+std::ostream& operator<<(std::ostream& str, const TestBase::Result& result)
+{
+    std::string result_str;
+    switch (result) {
+        case TestBase::Result::Success: result_str = "Success"; break;
+        case TestBase::Result::Failed: result_str = "Failed"; break;
+        case TestBase::Result::Timeout: result_str = "Timeout"; break;
+        case TestBase::Result::NotImplemented: result_str = "Not implemented"; break;
+    }
+
+    return str << result_str;
+}
+
 TestFactory& TestFactory::instance()
 {
     static TestFactory instance;

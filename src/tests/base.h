@@ -3,11 +3,45 @@
 #include <dronecode_sdk/dronecode_sdk.h>
 #include <yaml-cpp/yaml.h>
 
+#include <iostream>
 #include <map>
 #include <memory>
+#include <sstream>
 #include <string>
+#include <type_traits>
 
 #define UNUSED(x) (void)(x)
+
+// SFINAE to check if something is streamable adapted from:
+// https://stackoverflow.com/questions/29319000
+template <class...>
+struct Voider {
+    using type = void;
+};
+template <class... T>
+using void_t = typename Voider<T...>::type;
+
+template <class T, class = void>
+struct MaybeStreamable {
+    std::string print(const T& thing)
+    {
+        UNUSED(thing);
+        return "";
+    }
+    bool isStreamable() const { return false; }
+};
+
+template <class T>
+struct MaybeStreamable<T, void_t<decltype(std::declval<std::ostream&>() << std::declval<T>())>> {
+    std::string print(const T& thing)
+    {
+        std::stringstream ss;
+        ss << thing;
+        return ss.str();
+    }
+
+    bool isStreamable() const { return true; }
+};
 
 namespace tests
 {
@@ -64,9 +98,37 @@ public:
     void storeConfig(ConfigNode& config);
 
     /**
-     * Run the test and return the result
+     * Run the test.
      */
-    virtual Result run() = 0;
+    virtual void run() = 0;
+
+    /**
+     * Get the result of the test just run.
+     */
+    Result getResult() { return _result; };
+
+    template <typename T>
+    void expectEq(const T& a, const T& b, const std::string& a_str, const std::string& b_str,
+                  const std::string& file, int line)
+    {
+        if (a == b) {
+            return;
+        }
+
+        std::cout << "Check at " << extractFilename(file) << ":" << line << " failed" << std::endl;
+        std::cout << a_str << " != " << b_str << std::endl;
+
+        auto maybe_streamable = MaybeStreamable<T>();
+
+        if (maybe_streamable.isStreamable()) {
+            std::cout << maybe_streamable.print(a) << " != " << maybe_streamable.print(b)
+                      << std::endl;
+        }
+
+        _result = Result::Failed;
+    }
+
+#define EXPECT_EQ(a_, b_) expectEq((a_), (b_), #a_, #b_, __FILE__, __LINE__)
 
 protected:
     /**
@@ -75,18 +137,13 @@ protected:
     virtual void serialize(ConfigProvider& c) = 0;
 
     Context _context;
+    Result _result{Result::Success};
+
+private:
+    std::string extractFilename(const std::string& path);
 };
 
-inline const char* toString(TestBase::Result result)
-{
-    switch (result) {
-        case TestBase::Result::Success: return "Success";
-        case TestBase::Result::Failed: return "Failed";
-        case TestBase::Result::Timeout: return "Timeout";
-        case TestBase::Result::NotImplemented: return "Not implemented";
-    }
-    return "Unknown";
-}
+std::ostream& operator<<(std::ostream& str, const TestBase::Result& result);
 
 /* registering tests helper classes */
 

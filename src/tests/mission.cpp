@@ -22,7 +22,7 @@ shared_ptr<dcsdk::MissionItem> Mission::makeMissionItem(double latitude_deg, dou
     return new_item;
 }
 
-TestBase::Result Mission::run()
+void Mission::run()
 {
     mission_items items = assembleMissionItems();
 
@@ -30,8 +30,6 @@ TestBase::Result Mission::run()
     mission_items downloaded_items = downloadMission();
 
     compareMissions(items, downloaded_items);
-
-    return Result::Success;
 }
 
 mission_items Mission::assembleMissionItems()
@@ -60,13 +58,7 @@ void Mission::uploadMission(const mission_items& items)
 
     // wait until uploaded
     const dcsdk::Mission::Result result = fut.get();
-    if (result != dcsdk::Mission::Result::SUCCESS) {
-        cout << "Mission upload failed (" << dcsdk::Mission::result_str(result) << "), exiting."
-             << endl;
-        // TODO: we need a mechanism to fail.
-        // return Result::Failed;
-    }
-    cout << "Mission uploaded." << endl;
+    EXPECT_EQ(result, dcsdk::Mission::Result::SUCCESS);
 }
 
 mission_items Mission::downloadMission()
@@ -84,31 +76,18 @@ mission_items Mission::downloadMission()
     const mission_items& items = value.second;
 
     // wait until uploaded
-    if (result != dcsdk::Mission::Result::SUCCESS) {
-        cout << "Mission upload failed (" << dcsdk::Mission::result_str(fut.get().first)
-             << "), exiting." << endl;
-        // TODO: we need a mechanism to fail.
-        // return Result::Failed;
-    }
-    cout << "Mission uploaded." << endl;
+    EXPECT_EQ(result, dcsdk::Mission::Result::SUCCESS);
 
     return items;
 }
 
 void Mission::compareMissions(const mission_items& items_a, const mission_items& items_b)
 {
-    if (items_a.size() != items_b.size()) {
-        cout << "item count is different!" << endl;
-        return;
-    }
+    EXPECT_EQ(items_a.size(), items_b.size());
 
     for (unsigned i = 0; i < items_a.size(); ++i) {
-        if (!(*(items_a[i]) == *(items_b[i]))) {
-            cout << "item " << i << " is different!" << endl;
-        }
+        EXPECT_EQ(*(items_a[i]), *(items_b[i]));
     }
-
-    // TODO: We need something like gtest for this.
 }
 
 }  // namespace tests

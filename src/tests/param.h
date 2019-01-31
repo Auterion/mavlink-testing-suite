@@ -30,7 +30,7 @@ public:
     explicit ParamChange(const Context& context);
     ~ParamChange() override = default;
 
-    Result run() override;
+    void run() override;
 
 protected:
     void serialize(ConfigProvider& c) override { _config.serialize(c); }
