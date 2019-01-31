@@ -1,29 +1,12 @@
 #! /bin/bash
 
 BUILD_DIR=build_ci
-SDK_INSTALL_DIR="$(pwd)/DronecodeSDK-install"
 
 set -e
 
-# Get the SDK - for now we use the latest develop version
-if [ -d DronecodeSDK ]; then
-	# If it's already here, make sure it's up-to-date and clean
-	pushd DronecodeSDK
-	git pull
-	make clean
-	popd
-else
-	git clone --recursive https://github.com/Dronecode/DronecodeSDK.git || true
-fi
-pushd DronecodeSDK
-[ ! -d "$SDK_INSTALL_DIR" ] && mkdir -p "$SDK_INSTALL_DIR"
-export INSTALL_PREFIX="$SDK_INSTALL_DIR"
-make default install
-popd
-
 [ ! -d "$BUILD_DIR" ] && mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR"
-cmake .. -DSDK_INSTALL_DIR="${SDK_INSTALL_DIR}"
+cmake ..
 make
 
 set +e
