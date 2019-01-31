@@ -24,11 +24,8 @@ TestBase::TestBase(const Context& context) : _context(context) {}
 
 std::string TestBase::extractFilename(const std::string& path)
 {
-    std::stringstream ss(path);
-    std::string token;
-    while (std::getline(ss, token, '/'))
-        ;
-    return token;
+    int pos = path.find_last_of('/');
+    return path.substr(pos + 1, std::string::npos);
 }
 
 std::ostream& operator<<(std::ostream& str, const TestBase::Result& result)
