@@ -25,11 +25,6 @@ string(TIMESTAMP SUITE_VERSION_BUILD_TIMESTAMP "%Y-%m-%dT%H:%M:%S.000000Z" UTC)
 # Specify at least C++11
 set(CMAKE_CXX_STANDARD 11)
 
-set(SDK_INSTALL_DIR "" CACHE STRING "SDK installation directory")
-if("${SDK_INSTALL_DIR}" STREQUAL "")
-	message( FATAL_ERROR "Pass the SDK installation directory via -DSDK_INSTALL_DIR=<directory>" )
-endif()
-
 # Enable strict handling of warnings
 if(MSVC)
     add_definitions("-WX -W2")
@@ -38,12 +33,23 @@ else()
 endif()
 
 # add SDK
-include_directories(${SDK_INSTALL_DIR}/include)
-link_directories(${SDK_INSTALL_DIR}/lib)
+include(ExternalProject)
+ExternalProject_Add(third_party_dronecode_sdk
+    SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/DronecodeSDK
+    CMAKE_ARGS
+        -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk/install
+    GIT_REPOSITORY https://github.com/Dronecode/DronecodeSDK.git
+    GIT_TAG v0.13.0
+    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk
+    #INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk/install"
+    INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
+    )
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk/install/include)
+link_directories(${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk/install/lib)
 
 # add YAML (build from source)
 include(ExternalProject)
-ExternalProject_Add(yaml
+ExternalProject_Add(third_party_yaml
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/yaml-cpp
     CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
@@ -62,7 +68,10 @@ add_executable(mavlink_testing_suite
     src/tests/mission.cpp
     src/tests/param.cpp
 )
-add_dependencies(mavlink_testing_suite yaml)
+add_dependencies(mavlink_testing_suite
+    third_party_yaml
+    third_party_dronecode_sdk
+    )
 
 target_link_libraries(mavlink_testing_suite
     dronecode_sdk
