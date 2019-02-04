@@ -88,6 +88,10 @@ void Mission::compareMissions(const std::vector<std::shared_ptr<dcsdk::MissionIt
 {
     EXPECT_EQ(items_a.size(), items_b.size());
 
+    if (items_a.size() != items_b.size()) {
+        return;
+    }
+
     for (unsigned i = 0; i < items_a.size(); ++i) {
         EXPECT_EQ(*(items_a[i]), *(items_b[i]));
     }
