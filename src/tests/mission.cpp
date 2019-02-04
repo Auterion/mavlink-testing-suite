@@ -24,19 +24,19 @@ shared_ptr<dcsdk::MissionItem> Mission::makeMissionItem(double latitude_deg, dou
 
 void Mission::run()
 {
-    mission_items items = assembleMissionItems();
+    std::vector<std::shared_ptr<dcsdk::MissionItem>> items = assembleMissionItems();
 
     uploadMission(items);
-    mission_items downloaded_items = downloadMission();
+    std::vector<std::shared_ptr<dcsdk::MissionItem>> downloaded_items = downloadMission();
 
     compareMissions(items, downloaded_items);
 }
 
-mission_items Mission::assembleMissionItems()
+std::vector<std::shared_ptr<dcsdk::MissionItem>> Mission::assembleMissionItems()
 {
     cout << "Number of waypoints: " << _config.num_waypoints << endl;
 
-    mission_items items{};
+    std::vector<std::shared_ptr<dcsdk::MissionItem>> items{};
 
     for (int i = 0; i < _config.num_waypoints; ++i) {
         float altitude = 10.f + (float)i;
@@ -47,7 +47,7 @@ mission_items Mission::assembleMissionItems()
     return items;
 }
 
-void Mission::uploadMission(const mission_items& items)
+void Mission::uploadMission(const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items)
 {
     cout << "Uploading mission..." << endl;
     promise<dcsdk::Mission::Result> prom{};
@@ -61,19 +61,21 @@ void Mission::uploadMission(const mission_items& items)
     EXPECT_EQ(result, dcsdk::Mission::Result::SUCCESS);
 }
 
-mission_items Mission::downloadMission()
+std::vector<std::shared_ptr<dcsdk::MissionItem>> Mission::downloadMission()
 {
     cout << "Downloading mission..." << endl;
-    promise<pair<dcsdk::Mission::Result, mission_items>> prom{};
+    promise<pair<dcsdk::Mission::Result, std::vector<std::shared_ptr<dcsdk::MissionItem>>>> prom{};
     auto fut = prom.get_future();
 
-    _mission.download_mission_async([&prom](dcsdk::Mission::Result result, mission_items items) {
-        prom.set_value(make_pair(result, items));
-    });
+    _mission.download_mission_async(
+        [&prom](dcsdk::Mission::Result result,
+                std::vector<std::shared_ptr<dcsdk::MissionItem>> items) {
+            prom.set_value(make_pair(result, items));
+        });
 
     auto value = fut.get();
     const dcsdk::Mission::Result& result = value.first;
-    const mission_items& items = value.second;
+    const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items = value.second;
 
     // wait until uploaded
     EXPECT_EQ(result, dcsdk::Mission::Result::SUCCESS);
@@ -81,7 +83,8 @@ mission_items Mission::downloadMission()
     return items;
 }
 
-void Mission::compareMissions(const mission_items& items_a, const mission_items& items_b)
+void Mission::compareMissions(const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items_a,
+                              const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items_b)
 {
     EXPECT_EQ(items_a.size(), items_b.size());
 

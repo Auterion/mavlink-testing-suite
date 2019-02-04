@@ -6,7 +6,6 @@
 #include <dronecode_sdk/plugins/mission/mission.h>
 
 namespace dcsdk = dronecode_sdk;
-using mission_items = std::vector<std::shared_ptr<dcsdk::MissionItem>>;
 
 namespace tests
 {
@@ -35,10 +34,11 @@ private:
     std::shared_ptr<dcsdk::MissionItem> makeMissionItem(double latitude_deg, double longitude_deg,
                                                         float relative_altitude_m);
 
-    mission_items assembleMissionItems();
-    void uploadMission(const mission_items& items);
-    mission_items downloadMission();
-    void compareMissions(const mission_items& items_a, const mission_items& items_b);
+    std::vector<std::shared_ptr<dcsdk::MissionItem>> assembleMissionItems();
+    void uploadMission(const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items);
+    std::vector<std::shared_ptr<dcsdk::MissionItem>> downloadMission();
+    void compareMissions(const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items_a,
+                         const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items_b);
 
     dcsdk::Mission _mission;
     Config _config;
