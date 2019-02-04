@@ -32,8 +32,9 @@ else()
     add_definitions("-Wall -Wextra -Werror")
 endif()
 
-# add SDK
 include(ExternalProject)
+
+# add SDK
 ExternalProject_Add(third_party_dronecode_sdk
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/DronecodeSDK
     CMAKE_ARGS
@@ -47,7 +48,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk/install/incl
 link_directories(${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk/install/lib)
 
 # add YAML (build from source)
-include(ExternalProject)
 ExternalProject_Add(third_party_yaml
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/yaml-cpp
     CMAKE_ARGS
