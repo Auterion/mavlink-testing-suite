@@ -41,7 +41,6 @@ ExternalProject_Add(third_party_dronecode_sdk
     GIT_REPOSITORY https://github.com/Dronecode/DronecodeSDK.git
     GIT_TAG v0.13.0
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk
-    #INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk/install"
     INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
     )
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk/install/include)
