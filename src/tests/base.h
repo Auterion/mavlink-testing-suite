@@ -4,6 +4,7 @@
 #include <yaml-cpp/yaml.h>
 #include "streamable.h"
 
+#include <exception>
 #include <iostream>
 #include <map>
 #include <memory>
@@ -60,6 +61,10 @@ class TestBase
 public:
     enum class Result { Success = 0, Failed, Timeout, NotImplemented };
 
+    struct TestAborted : public std::exception {
+        const char* what() const noexcept override { return "Test aborted"; }
+    };
+
     explicit TestBase(const Context& context);
     virtual ~TestBase() = default;
 
@@ -84,7 +89,7 @@ public:
             return;
         }
 
-        std::cout << "Check at " << extractFilename(file) << ":" << line << " failed" << std::endl;
+        std::cout << "Expect at " << extractFilename(file) << ":" << line << " failed" << std::endl;
         std::cout << a_str << " != " << b_str << std::endl;
 
         auto maybe_streamable = MaybeStreamable<T>();
@@ -97,7 +102,29 @@ public:
         _result = Result::Failed;
     }
 
+    template <typename T>
+    void assertEq(const T& a, const T& b, const std::string& a_str, const std::string& b_str,
+                  const std::string& file, int line)
+    {
+        if (a == b) {
+            return;
+        }
+
+        std::cout << "Assert at " << extractFilename(file) << ":" << line << " failed" << std::endl;
+        std::cout << a_str << " != " << b_str << std::endl;
+
+        auto maybe_streamable = MaybeStreamable<T>();
+
+        if (maybe_streamable.isStreamable()) {
+            std::cout << maybe_streamable.print(a) << " != " << maybe_streamable.print(b)
+                      << std::endl;
+        }
+
+        throw TestAborted();
+    }
+
 #define EXPECT_EQ(a_, b_) expectEq((a_), (b_), #a_, #b_, __FILE__, __LINE__)
+#define ASSERT_EQ(a_, b_) assertEq((a_), (b_), #a_, #b_, __FILE__, __LINE__)
 
 protected:
     /**
