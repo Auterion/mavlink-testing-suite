@@ -24,7 +24,7 @@ TestBase::TestBase(const Context& context) : _context(context) {}
 
 std::string TestBase::extractFilename(const std::string& path)
 {
-    auto pos = path.find_last_of('/');
+    auto pos = path.find_last_of(separator());
     if (pos == std::string::npos) {
         throw std::invalid_argument("Could not extract filename");
     }

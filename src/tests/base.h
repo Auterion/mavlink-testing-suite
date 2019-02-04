@@ -137,6 +137,14 @@ protected:
 
 private:
     std::string extractFilename(const std::string& path);
+    static constexpr char separator()
+    {
+#ifdef _WIN32
+        return '\\';
+#else
+        return '/';
+#endif
+    }
 };
 
 std::ostream& operator<<(std::ostream& str, const TestBase::Result& result);
