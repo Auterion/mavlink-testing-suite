@@ -58,7 +58,7 @@ void Mission::uploadMission(const std::vector<std::shared_ptr<dcsdk::MissionItem
 
     // wait until uploaded
     const dcsdk::Mission::Result result = fut.get();
-    EXPECT_EQ(result, dcsdk::Mission::Result::SUCCESS);
+    ASSERT_EQ(result, dcsdk::Mission::Result::SUCCESS);
 }
 
 std::vector<std::shared_ptr<dcsdk::MissionItem>> Mission::downloadMission()
@@ -78,7 +78,7 @@ std::vector<std::shared_ptr<dcsdk::MissionItem>> Mission::downloadMission()
     const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items = value.second;
 
     // wait until uploaded
-    EXPECT_EQ(result, dcsdk::Mission::Result::SUCCESS);
+    ASSERT_EQ(result, dcsdk::Mission::Result::SUCCESS);
 
     return items;
 }

@@ -10,6 +10,7 @@
 #include <memory>
 #include <string>
 #include <type_traits>
+#include <utility>
 
 #define UNUSED(x) (void)(x)
 
@@ -61,8 +62,14 @@ class TestBase
 public:
     enum class Result { Success = 0, Failed, Timeout, NotImplemented };
 
-    struct TestAborted : public std::exception {
-        const char* what() const noexcept override { return "Test aborted"; }
+    class TestAborted : public std::exception
+    {
+    public:
+        explicit TestAborted(std::string reason) : _reason(std::move(reason)) {}
+        const char* what() const noexcept override { return _reason.c_str(); }
+
+    protected:
+        const std::string _reason;
     };
 
     explicit TestBase(const Context& context);
@@ -120,7 +127,7 @@ public:
                       << std::endl;
         }
 
-        throw TestAborted();
+        throw TestAborted("assertEq failed");
     }
 
 #define EXPECT_EQ(a_, b_) expectEq((a_), (b_), #a_, #b_, __FILE__, __LINE__)

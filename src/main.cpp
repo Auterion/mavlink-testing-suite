@@ -84,17 +84,24 @@ int main(int argc, char** argv)
 
         test->loadConfig(test_node);
 
-        test->run();
-        tests::TestBase::Result result = test->getResult();
+        try {
+            test->run();
+        } catch (tests::TestBase::TestAborted& e) {
+            std::cout << test_name << " aborted early (" << e.what() << ")" << std::endl;
+            failed = true;
+        }
 
-        std::cout << test_name << " test result: " << result << std::endl;
+        if (!failed) {
+            tests::TestBase::Result result = test->getResult();
+            if (result != tests::TestBase::Result::Success) {
+                failed = true;
+            }
+            std::cout << test_name << " test result: " << result << std::endl;
+        }
 
         // store the actually used config (which includes the default values) back
         // in the YAML config node
         test->storeConfig(test_node);
-
-        if (result != tests::TestBase::Result::Success)
-            failed = true;
     }
 
     return failed ? -1 : 0;
