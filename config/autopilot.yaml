@@ -1,6 +1,6 @@
 tests:
-    - name: MissionUpload
-      num_waypoints: 50
+    - name: Mission
+      num_waypoints: 500
 
     - name: ParamChange
       param_name: SYS_HITL

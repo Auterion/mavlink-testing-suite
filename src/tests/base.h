@@ -2,10 +2,17 @@
 
 #include <dronecode_sdk/dronecode_sdk.h>
 #include <yaml-cpp/yaml.h>
+#include "streamable.h"
 
+#include <exception>
+#include <iostream>
 #include <map>
 #include <memory>
 #include <string>
+#include <type_traits>
+#include <utility>
+
+#define UNUSED(x) (void)(x)
 
 namespace tests
 {
@@ -55,6 +62,16 @@ class TestBase
 public:
     enum class Result { Success = 0, Failed, Timeout, NotImplemented };
 
+    class TestAborted : public std::exception
+    {
+    public:
+        explicit TestAborted(std::string reason) : _reason(std::move(reason)) {}
+        const char* what() const noexcept override { return _reason.c_str(); }
+
+    protected:
+        const std::string _reason;
+    };
+
     explicit TestBase(const Context& context);
     virtual ~TestBase() = default;
 
@@ -62,9 +79,59 @@ public:
     void storeConfig(ConfigNode& config);
 
     /**
-     * Run the test and return the result
+     * Run the test.
      */
-    virtual Result run() = 0;
+    virtual void run() = 0;
+
+    /**
+     * Get the result of the test just run.
+     */
+    Result getResult() { return _result; };
+
+    template <typename T>
+    void expectEq(const T& a, const T& b, const std::string& a_str, const std::string& b_str,
+                  const std::string& file, int line)
+    {
+        if (a == b) {
+            return;
+        }
+
+        std::cout << "Expect at " << extractFilename(file) << ":" << line << " failed" << std::endl;
+        std::cout << a_str << " != " << b_str << std::endl;
+
+        auto maybe_streamable = MaybeStreamable<T>();
+
+        if (maybe_streamable.isStreamable()) {
+            std::cout << maybe_streamable.print(a) << " != " << maybe_streamable.print(b)
+                      << std::endl;
+        }
+
+        _result = Result::Failed;
+    }
+
+    template <typename T>
+    void assertEq(const T& a, const T& b, const std::string& a_str, const std::string& b_str,
+                  const std::string& file, int line)
+    {
+        if (a == b) {
+            return;
+        }
+
+        std::cout << "Assert at " << extractFilename(file) << ":" << line << " failed" << std::endl;
+        std::cout << a_str << " != " << b_str << std::endl;
+
+        auto maybe_streamable = MaybeStreamable<T>();
+
+        if (maybe_streamable.isStreamable()) {
+            std::cout << maybe_streamable.print(a) << " != " << maybe_streamable.print(b)
+                      << std::endl;
+        }
+
+        throw TestAborted("assertEq failed");
+    }
+
+#define EXPECT_EQ(a_, b_) expectEq((a_), (b_), #a_, #b_, __FILE__, __LINE__)
+#define ASSERT_EQ(a_, b_) assertEq((a_), (b_), #a_, #b_, __FILE__, __LINE__)
 
 protected:
     /**
@@ -73,18 +140,21 @@ protected:
     virtual void serialize(ConfigProvider& c) = 0;
 
     Context _context;
+    Result _result{Result::Success};
+
+private:
+    std::string extractFilename(const std::string& path);
+    static constexpr char separator()
+    {
+#ifdef _WIN32
+        return '\\';
+#else
+        return '/';
+#endif
+    }
 };
 
-inline const char* toString(TestBase::Result result)
-{
-    switch (result) {
-        case TestBase::Result::Success: return "Success";
-        case TestBase::Result::Failed: return "Failed";
-        case TestBase::Result::Timeout: return "Timeout";
-        case TestBase::Result::NotImplemented: return "Not implemented";
-    }
-    return "Unknown";
-}
+std::ostream& operator<<(std::ostream& str, const TestBase::Result& result);
 
 /* registering tests helper classes */
 

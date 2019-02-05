@@ -5,13 +5,15 @@
 #include <dronecode_sdk/dronecode_sdk.h>
 #include <dronecode_sdk/plugins/mission/mission.h>
 
+namespace dcsdk = dronecode_sdk;
+
 namespace tests
 {
 /**
- * @class MissionUpload
+ * @class Mission
  * Test Mission Upload
  */
-class MissionUpload : public TestBase
+class Mission : public TestBase
 {
 public:
     struct Config {
@@ -20,19 +22,25 @@ public:
         void serialize(ConfigProvider& c) { c("num_waypoints", num_waypoints); }
     };
 
-    explicit MissionUpload(const Context& context);
-    ~MissionUpload() override = default;
+    explicit Mission(const Context& context);
+    ~Mission() override = default;
 
-    Result run() override;
+    void run() override;
 
 protected:
     void serialize(ConfigProvider& c) override { _config.serialize(c); }
 
 private:
-    std::shared_ptr<dronecode_sdk::MissionItem> makeMissionItem(double latitude_deg, double longitude_deg,
-                                                                float relative_altitude_m);
+    std::shared_ptr<dcsdk::MissionItem> makeMissionItem(double latitude_deg, double longitude_deg,
+                                                        float relative_altitude_m);
 
-    dronecode_sdk::Mission _mission;
+    std::vector<std::shared_ptr<dcsdk::MissionItem>> assembleMissionItems();
+    void uploadMission(const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items);
+    std::vector<std::shared_ptr<dcsdk::MissionItem>> downloadMission();
+    void compareMissions(const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items_a,
+                         const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items_b);
+
+    dcsdk::Mission _mission;
     Config _config;
 };
 
