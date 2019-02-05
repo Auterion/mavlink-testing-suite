@@ -4,5 +4,12 @@ tests:
 
     - name: ParamChange
       param_name: SYS_HITL
+      param_type: int32
       param_set_value: 1
       param_reset_value: 0
+
+    - name: ParamChange
+      param_name: MPC_XY_CRUISE
+      param_type: float
+      param_set_value: 10.0
+      param_reset_value: 5.0
