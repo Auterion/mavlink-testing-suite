@@ -16,6 +16,13 @@ The design intent is described in https://docs.google.com/document/d/1zwUZ-VUmq2
   (cd build && ./mavlink_testing_suite udp://)
   ```
 
+### Fix Code Formatting and Style
+
+Before committing, make sure to run the code formatting and tidying using clang.
+```
+(cd build && make format; make clang_tidy)
+```
+
 ### Sample Output
 This is the output of a successful test run:
 ```
