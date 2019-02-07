@@ -1,5 +1,7 @@
 ## MAVLink Standard Testing Suite
 
+[![Build Status](https://travis-ci.org/Auterion/mavlink-testing-suite.svg?branch=master)](https://travis-ci.org/Auterion/mavlink-testing-suite)
+
 This project aims to provide a testing suite to test standard compliance of
 MAVLink-enabled components/systems.
 The design intent is described in https://docs.google.com/document/d/1zwUZ-VUmq2pmCuGn1kY6BRS48-GiSXcMO5TUfnTpqmI
