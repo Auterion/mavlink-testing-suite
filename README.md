@@ -6,16 +6,14 @@ The design intent is described in https://docs.google.com/document/d/1zwUZ-VUmq2
 
 - Build the testing suite:
   ```
-  mkdir build && cd build
-  cmake ..
-  make
+  (mkdir -p build && cd build && cmake .. && make)
   ```
 ### Running the Test(s)
 
 - Start the SITL simulation
 - Then run the tests in the `build` directory with:
   ```
-  ./mavlink_testing_suite udp://
+  (cd build && ./mavlink_testing_suite udp://)
   ```
 
 ### Sample Output
