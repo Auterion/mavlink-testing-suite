@@ -5,6 +5,7 @@ ExternalProject_Add(third_party_dronecode_sdk
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/DronecodeSDK
     CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk/install
+        -DENABLE_MAVLINK_PASSTHROUGH=1
     GIT_REPOSITORY https://github.com/Dronecode/DronecodeSDK.git
     GIT_TAG v0.14.1
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk
