@@ -7,7 +7,7 @@ ExternalProject_Add(third_party_dronecode_sdk
         -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk/install
         -DENABLE_MAVLINK_PASSTHROUGH=1
     GIT_REPOSITORY https://github.com/Dronecode/DronecodeSDK.git
-    GIT_TAG v0.14.1
+    GIT_TAG fix-passthrough-reset
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk
     INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
     )
