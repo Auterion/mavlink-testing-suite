@@ -39,7 +39,7 @@ void Mission::runInPerfectConditions()
 
 void Mission::runWithDrops()
 {
-    // TODO: configure drops and then run it.
+    dropMessages(0.25f);
     uploadDownloadCompare();
 }
 
@@ -124,6 +124,23 @@ void Mission::compareMissions(const std::vector<std::shared_ptr<dcsdk::MissionIt
     for (unsigned i = 0; i < items_a.size(); ++i) {
         EXPECT_EQ(*(items_a[i]), *(items_b[i]));
     }
+}
+
+void Mission::dropMessages(float ratio)
+{
+    _mavlink_passthrough.intercept_incoming_messages_async(
+        [this, ratio](mavlink_message_t& message) {
+            UNUSED(message);
+            const bool should_drop = _lossy_link.drop(ratio);
+            return should_drop;
+        });
+
+    _mavlink_passthrough.intercept_outgoing_messages_async(
+        [this, ratio](mavlink_message_t& message) {
+            UNUSED(message);
+            const bool should_drop = _lossy_link.drop(ratio);
+            return should_drop;
+        });
 }
 
 }  // namespace tests

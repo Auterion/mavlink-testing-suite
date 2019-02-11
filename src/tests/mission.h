@@ -1,6 +1,7 @@
 #pragma once
 
 #include "base.h"
+#include "lossy_link.h"
 
 #include <dronecode_sdk/dronecode_sdk.h>
 #include <dronecode_sdk/plugins/mavlink_passthrough/mavlink_passthrough.h>
@@ -45,9 +46,13 @@ private:
     void compareMissions(const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items_a,
                          const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items_b);
 
+    void dropMessages(float ratio);
+
     dcsdk::Mission _mission;
     dcsdk::MavlinkPassthrough _mavlink_passthrough;
     Config _config;
+
+    LossyLink _lossy_link{};
 };
 
 }  // namespace tests

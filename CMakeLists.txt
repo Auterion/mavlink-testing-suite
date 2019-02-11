@@ -40,6 +40,7 @@ add_executable(mavlink_testing_suite
     src/tests/base.cpp
     src/tests/mission.cpp
     src/tests/param.cpp
+    src/tests/lossy_link.cpp
 )
 add_dependencies(mavlink_testing_suite
     third_party_yaml
