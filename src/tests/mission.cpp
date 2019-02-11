@@ -27,12 +27,38 @@ shared_ptr<dcsdk::MissionItem> Mission::makeMissionItem(double latitude_deg, dou
 
 void Mission::run()
 {
+    runInPerfectConditions();
+    eraseMission();
+    runWithDrops();
+}
+
+void Mission::runInPerfectConditions()
+{
+    uploadDownloadCompare();
+}
+
+void Mission::runWithDrops()
+{
+    // TODO: configure drops and then run it.
+    uploadDownloadCompare();
+}
+
+void Mission::uploadDownloadCompare()
+{
     std::vector<std::shared_ptr<dcsdk::MissionItem>> items = assembleMissionItems();
 
     uploadMission(items);
     std::vector<std::shared_ptr<dcsdk::MissionItem>> downloaded_items = downloadMission();
 
     compareMissions(items, downloaded_items);
+}
+
+void Mission::eraseMission()
+{
+    // TODO: presumably the Dronecode SDK should expose a function to do `MISSION_CLEAR_ALL`
+    //       instead of uploading an empty mission list.
+    std::vector<std::shared_ptr<dcsdk::MissionItem>> no_items{};
+    uploadMission(no_items);
 }
 
 std::vector<std::shared_ptr<dcsdk::MissionItem>> Mission::assembleMissionItems()

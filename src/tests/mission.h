@@ -32,6 +32,10 @@ protected:
     void serialize(ConfigProvider& c) override { _config.serialize(c); }
 
 private:
+    void runInPerfectConditions();
+    void runWithDrops();
+    void uploadDownloadCompare();
+    void eraseMission();
     std::shared_ptr<dcsdk::MissionItem> makeMissionItem(double latitude_deg, double longitude_deg,
                                                         float relative_altitude_m);
 
