@@ -11,7 +11,10 @@ namespace tests
 {
 REGISTER_TEST(Mission);
 
-Mission::Mission(const Context& context) : TestBase(context), _mission(context.system) {}
+Mission::Mission(const Context& context)
+    : TestBase(context), _mission(context.system), _mavlink_passthrough(context.system)
+{
+}
 
 shared_ptr<dcsdk::MissionItem> Mission::makeMissionItem(double latitude_deg, double longitude_deg,
                                                         float relative_altitude_m)

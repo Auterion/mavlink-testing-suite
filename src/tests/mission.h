@@ -3,6 +3,7 @@
 #include "base.h"
 
 #include <dronecode_sdk/dronecode_sdk.h>
+#include <dronecode_sdk/plugins/mavlink_passthrough/mavlink_passthrough.h>
 #include <dronecode_sdk/plugins/mission/mission.h>
 
 namespace dcsdk = dronecode_sdk;
@@ -41,6 +42,7 @@ private:
                          const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items_b);
 
     dcsdk::Mission _mission;
+    dcsdk::MavlinkPassthrough _mavlink_passthrough;
     Config _config;
 };
 
