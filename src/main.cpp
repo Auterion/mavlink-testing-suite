@@ -1,10 +1,12 @@
 
+#include <algorithm>
 #include <chrono>
 #include <cstdint>
 #include <functional>
 #include <future>
 #include <iostream>
 #include <thread>
+#include <vector>
 
 #include <dronecode_sdk/dronecode_sdk.h>
 
@@ -74,11 +76,14 @@ int main(int argc, char** argv)
     YAML::Node config = YAML::LoadFile("../config/autopilot.yaml");
     YAML::Node tests_node = config["tests"];
 
+    std::vector<bool> fails(tests_node.size(), false);
+
     // Run the test(s)
     tests::Context context{.system = system};
-    bool failed = false;
+    unsigned i = 0;
     for (auto test_node : tests_node) {
         std::string test_name = test_node["name"].as<std::string>();
+        fails[i] = false;
         std::unique_ptr<tests::TestBase> test =
             tests::TestFactory::instance().getTest(test_name, context);
 
@@ -88,13 +93,13 @@ int main(int argc, char** argv)
             test->run();
         } catch (tests::TestBase::TestAborted& e) {
             std::cout << test_name << " aborted early (" << e.what() << ")" << std::endl;
-            failed = true;
+            fails[i] = true;
         }
 
-        if (!failed) {
+        if (!fails[i]) {
             tests::TestBase::Result result = test->getResult();
             if (result != tests::TestBase::Result::Success) {
-                failed = true;
+                fails[i] = true;
             }
             std::cout << test_name << " test result: " << result << std::endl;
         }
@@ -102,7 +107,34 @@ int main(int argc, char** argv)
         // store the actually used config (which includes the default values) back
         // in the YAML config node
         test->storeConfig(test_node);
+        std::cout << "----" << std::endl;
+        ++i;
     }
 
-    return failed ? -1 : 0;
+    std::cout << "Test summary:" << std::endl;
+
+    i = 0;
+    for (auto test_node : tests_node) {
+        std::cout << test_node["name"].as<std::string>() << ":" << std::endl;
+        for (auto config : test_node) {
+            std::cout << config.first.as<std::string>() << ": " << config.second.as<std::string>()
+                      << std::endl;
+        }
+
+        // TODO: this is ugly but otherwise clang-tidy complains.
+        std::string result_str;
+        if (fails[i]) {
+            result_str = "failed";
+        } else {
+            result_str = "passed";
+        }
+        std::cout << "  => " << result_str << std::endl;
+        std::cout << "----" << std::endl;
+        ++i;
+    }
+
+    return (std::any_of(fails.cbegin(), fails.cend(),
+                        [](std::vector<bool>::const_reference item) { return item; })
+                ? -1
+                : 0);
 }
