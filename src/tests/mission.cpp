@@ -12,7 +12,11 @@ namespace tests
 REGISTER_TEST(Mission);
 
 Mission::Mission(const Context& context)
-    : TestBase(context), _mission(context.system), _mavlink_passthrough(context.system)
+    : TestBase(context),
+      _mission(context.system),
+      _mavlink_passthrough(context.system),
+      _lossy_link_incoming(0),
+      _lossy_link_outgoing(1)
 {
 }
 
@@ -122,14 +126,14 @@ void Mission::dropMessages(const float ratio)
     _mavlink_passthrough.intercept_incoming_messages_async(
         [this, ratio](mavlink_message_t& message) {
             UNUSED(message);
-            const bool should_keep = !_lossy_link.drop(ratio);
+            const bool should_keep = !_lossy_link_incoming.drop(ratio);
             return should_keep;
         });
 
     _mavlink_passthrough.intercept_outgoing_messages_async(
         [this, ratio](mavlink_message_t& message) {
             UNUSED(message);
-            const bool should_keep = !_lossy_link.drop(ratio);
+            const bool should_keep = !_lossy_link_outgoing.drop(ratio);
             return should_keep;
         });
 }

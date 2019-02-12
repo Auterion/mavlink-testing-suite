@@ -1,5 +1,7 @@
 #include "lossy_link.h"
 
+LossyLink::LossyLink(int seed_num) : _seed({seed_num}) {}
+
 bool LossyLink::drop(float ratio)
 {
     std::lock_guard<std::mutex> lock(_mutex);

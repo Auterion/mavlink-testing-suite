@@ -22,7 +22,8 @@ public:
         int num_waypoints{10};
         float message_loss{0.0f};
 
-        void serialize(ConfigProvider& c) {
+        void serialize(ConfigProvider& c)
+        {
             c("num_waypoints", num_waypoints);
             c("message_loss", message_loss);
         }
@@ -54,7 +55,8 @@ private:
     dcsdk::MavlinkPassthrough _mavlink_passthrough;
     Config _config;
 
-    LossyLink _lossy_link{};
+    LossyLink _lossy_link_incoming;
+    LossyLink _lossy_link_outgoing;
 };
 
 }  // namespace tests
