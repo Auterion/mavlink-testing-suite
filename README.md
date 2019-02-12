@@ -25,6 +25,19 @@ Before committing, make sure to run the code formatting and tidying using clang.
 (cd build && make format; make clang_tidy)
 ```
 
+## Use custom Dronecode SDK build
+
+For debugging purposes it can be handy to use a custom version of the Dronecode SDK:
+
+```
+cd <wherever>/DronecodeSDK
+make clean
+export DRONECODE_SDK_INSTALL_DIR=$(pwd)/install
+make ENABLE_MAVLINK_PASSTHROUGH=1 INSTALL_PREFIX=$DRONECODE_SDK_INSTALL_DIR default install
+cd <wherever>/mavlink-testing-suite
+(mkdir -p build && cd build && cmake -DDRONECODE_SDK_INSTALL_DIR=$DRONECODE_SDK_INSTALL_DIR .. && make)
+```
+
 ### Sample Output
 This is the output of a successful test run:
 ```
