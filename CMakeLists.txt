@@ -43,8 +43,7 @@ add_executable(mavlink_testing_suite
     src/tests/lossy_link.cpp
 )
 add_dependencies(mavlink_testing_suite
-    third_party_yaml
-    third_party_dronecode_sdk
+    ${dependencies}
     )
 
 target_link_libraries(mavlink_testing_suite
