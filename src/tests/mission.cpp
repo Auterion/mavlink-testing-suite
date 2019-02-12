@@ -52,8 +52,8 @@ void Mission::eraseMission()
     //       instead of uploading an empty mission list.
 
     // This doesn't seem to work for now.
-    //std::vector<std::shared_ptr<dcsdk::MissionItem>> no_items{};
-    //uploadMission(no_items);
+    // std::vector<std::shared_ptr<dcsdk::MissionItem>> no_items{};
+    // uploadMission(no_items);
 }
 
 std::vector<std::shared_ptr<dcsdk::MissionItem>> Mission::assembleMissionItems()
