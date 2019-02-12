@@ -117,20 +117,20 @@ void Mission::compareMissions(const std::vector<std::shared_ptr<dcsdk::MissionIt
     }
 }
 
-void Mission::dropMessages(float ratio)
+void Mission::dropMessages(const float ratio)
 {
     _mavlink_passthrough.intercept_incoming_messages_async(
         [this, ratio](mavlink_message_t& message) {
             UNUSED(message);
-            const bool should_drop = _lossy_link.drop(ratio);
-            return should_drop;
+            const bool should_keep = !_lossy_link.drop(ratio);
+            return should_keep;
         });
 
     _mavlink_passthrough.intercept_outgoing_messages_async(
         [this, ratio](mavlink_message_t& message) {
             UNUSED(message);
-            const bool should_drop = _lossy_link.drop(ratio);
-            return should_drop;
+            const bool should_keep = !_lossy_link.drop(ratio);
+            return should_keep;
         });
 }
 
