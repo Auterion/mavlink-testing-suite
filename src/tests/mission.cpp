@@ -27,20 +27,9 @@ shared_ptr<dcsdk::MissionItem> Mission::makeMissionItem(double latitude_deg, dou
 
 void Mission::run()
 {
-    runInPerfectConditions();
+    dropMessages(_config.message_loss);
+    uploadDownloadCompare();
     eraseMission();
-    runWithDrops();
-}
-
-void Mission::runInPerfectConditions()
-{
-    uploadDownloadCompare();
-}
-
-void Mission::runWithDrops()
-{
-    dropMessages(0.25f);
-    uploadDownloadCompare();
 }
 
 void Mission::uploadDownloadCompare()

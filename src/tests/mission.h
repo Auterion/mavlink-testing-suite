@@ -20,8 +20,12 @@ class Mission : public TestBase
 public:
     struct Config {
         int num_waypoints{10};
+        float message_loss{0.0f};
 
-        void serialize(ConfigProvider& c) { c("num_waypoints", num_waypoints); }
+        void serialize(ConfigProvider& c) {
+            c("num_waypoints", num_waypoints);
+            c("message_loss", message_loss);
+        }
     };
 
     explicit Mission(const Context& context);
@@ -33,8 +37,6 @@ protected:
     void serialize(ConfigProvider& c) override { _config.serialize(c); }
 
 private:
-    void runInPerfectConditions();
-    void runWithDrops();
     void uploadDownloadCompare();
     void eraseMission();
     std::shared_ptr<dcsdk::MissionItem> makeMissionItem(double latitude_deg, double longitude_deg,
