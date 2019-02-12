@@ -57,8 +57,10 @@ void Mission::eraseMission()
 {
     // TODO: presumably the Dronecode SDK should expose a function to do `MISSION_CLEAR_ALL`
     //       instead of uploading an empty mission list.
-    std::vector<std::shared_ptr<dcsdk::MissionItem>> no_items{};
-    uploadMission(no_items);
+
+    // This doesn't seem to work for now.
+    //std::vector<std::shared_ptr<dcsdk::MissionItem>> no_items{};
+    //uploadMission(no_items);
 }
 
 std::vector<std::shared_ptr<dcsdk::MissionItem>> Mission::assembleMissionItems()
