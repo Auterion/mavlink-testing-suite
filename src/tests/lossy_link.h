@@ -1,6 +1,5 @@
 #pragma once
 
-#include <mutex>
 #include <random>
 
 class LossyLink
@@ -17,7 +16,6 @@ public:
     bool drop(float ratio);
 
 private:
-    std::mutex _mutex{};
     // We need predictable results, so we always start with the same seed.
     std::seed_seq _seed;
     std::default_random_engine _engine{_seed};
