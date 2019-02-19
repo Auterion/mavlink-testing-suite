@@ -121,14 +121,8 @@ int main(int argc, char** argv)
                       << std::endl;
         }
 
-        // TODO: this is ugly but otherwise clang-tidy complains.
-        std::string result_str;
-        if (fails[i]) {
-            result_str = "failed";
-        } else {
-            result_str = "passed";
-        }
-        std::cout << "  => " << result_str << std::endl;
+        std::cout << "  => " << (fails[i] ? std::string("failed") : std::string("passed"))
+                  << std::endl;
         std::cout << "----" << std::endl;
         ++i;
     }
