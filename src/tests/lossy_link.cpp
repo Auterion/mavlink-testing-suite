@@ -1,6 +1,6 @@
 #include "lossy_link.h"
 
-LossyLink::LossyLink(int seed_num) : _seed({seed_num}) {}
+LossyLink::LossyLink(int seed_num) : _engine(seed_num) {}
 
 bool LossyLink::drop(float ratio)
 {
