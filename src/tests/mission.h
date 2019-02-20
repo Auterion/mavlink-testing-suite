@@ -50,6 +50,7 @@ private:
                          const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items_b);
 
     void dropMessages(float ratio);
+    bool shouldDropMissionMessage(const mavlink_message_t& message, float ratio);
 
     dcsdk::Mission _mission;
     dcsdk::MavlinkPassthrough _mavlink_passthrough;
