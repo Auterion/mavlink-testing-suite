@@ -11,7 +11,14 @@ namespace tests
 {
 REGISTER_TEST(Mission);
 
-Mission::Mission(const Context& context) : TestBase(context), _mission(context.system) {}
+Mission::Mission(const Context& context)
+    : TestBase(context),
+      _mission(context.system),
+      _mavlink_passthrough(context.system),
+      _lossy_link_incoming(0),
+      _lossy_link_outgoing(1)
+{
+}
 
 shared_ptr<dcsdk::MissionItem> Mission::makeMissionItem(double latitude_deg, double longitude_deg,
                                                         float relative_altitude_m)
@@ -24,12 +31,29 @@ shared_ptr<dcsdk::MissionItem> Mission::makeMissionItem(double latitude_deg, dou
 
 void Mission::run()
 {
+    dropMessages(_config.message_loss);
+    uploadDownloadCompare();
+    eraseMission();
+}
+
+void Mission::uploadDownloadCompare()
+{
     std::vector<std::shared_ptr<dcsdk::MissionItem>> items = assembleMissionItems();
 
     uploadMission(items);
     std::vector<std::shared_ptr<dcsdk::MissionItem>> downloaded_items = downloadMission();
 
     compareMissions(items, downloaded_items);
+}
+
+void Mission::eraseMission()
+{
+    // TODO: presumably the Dronecode SDK should expose a function to do `MISSION_CLEAR_ALL`
+    //       instead of uploading an empty mission list.
+
+    // This doesn't seem to work for now.
+    // std::vector<std::shared_ptr<dcsdk::MissionItem>> no_items{};
+    // uploadMission(no_items);
 }
 
 std::vector<std::shared_ptr<dcsdk::MissionItem>> Mission::assembleMissionItems()
@@ -95,6 +119,23 @@ void Mission::compareMissions(const std::vector<std::shared_ptr<dcsdk::MissionIt
     for (unsigned i = 0; i < items_a.size(); ++i) {
         EXPECT_EQ(*(items_a[i]), *(items_b[i]));
     }
+}
+
+void Mission::dropMessages(const float ratio)
+{
+    _mavlink_passthrough.intercept_incoming_messages_async(
+        [this, ratio](mavlink_message_t& message) {
+            UNUSED(message);
+            const bool should_keep = !_lossy_link_incoming.drop(ratio);
+            return should_keep;
+        });
+
+    _mavlink_passthrough.intercept_outgoing_messages_async(
+        [this, ratio](mavlink_message_t& message) {
+            UNUSED(message);
+            const bool should_keep = !_lossy_link_outgoing.drop(ratio);
+            return should_keep;
+        });
 }
 
 }  // namespace tests

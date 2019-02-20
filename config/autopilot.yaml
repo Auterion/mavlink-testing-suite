@@ -1,6 +1,11 @@
 tests:
     - name: Mission
       num_waypoints: 500
+      message_loss: 0.0
+
+    - name: Mission
+      num_waypoints: 500
+      message_loss: 0.25
 
     - name: ParamChange
       param_name: SYS_HITL

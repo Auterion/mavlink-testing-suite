@@ -3,7 +3,7 @@
 #include "base.h"
 
 #include <dronecode_sdk/dronecode_sdk.h>
-#include <dronecode_sdk/plugins/param_raw/params_raw.h>
+#include <dronecode_sdk/plugins/params_raw/params_raw.h>
 
 namespace tests
 {
