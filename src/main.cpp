@@ -28,22 +28,24 @@ void componentDiscovered(ComponentType component_type)
 
 int main(int argc, char** argv)
 {
-    DronecodeSDK dc;
-    std::string connection_url;
     ConnectionResult connection_result;
 
+    DronecodeSDK dc;
+
     bool discovered_system = false;
-    if (argc == 2) {
-        connection_url = argv[1];
-        // connection_url format:
-        // For TCP : tcp://[server_host][:server_port]
-        // For UDP : udp://[bind_host][:bind_port]
-        // For Serial : serial:///path/to/serial/dev[:baudrate]
-        connection_result = dc.add_any_connection(connection_url);
-    } else {
-        std::cout << "Must specify a connection" << std::endl;
+    if (argc != 3) {
+        std::cout << "Must specify a config file and a connection" << std::endl;
         return 1;
     }
+
+    const std::string config_file_path = argv[1];
+    const std::string connection_url = argv[2];
+
+    // connection_url format:
+    // For TCP : tcp://[server_host][:server_port]
+    // For UDP : udp://[bind_host][:bind_port]
+    // For Serial : serial:///path/to/serial/dev[:baudrate]
+    connection_result = dc.add_any_connection(connection_url);
 
     if (connection_result != ConnectionResult::SUCCESS) {
         std::cout << ERROR_CONSOLE_TEXT
@@ -73,7 +75,7 @@ int main(int argc, char** argv)
     system.register_component_discovered_callback(componentDiscovered);
 
     // load config
-    YAML::Node config = YAML::LoadFile("../config/autopilot.yaml");
+    YAML::Node config = YAML::LoadFile(config_file_path);
     YAML::Node tests_node = config["tests"];
 
     std::vector<bool> fails(tests_node.size(), false);

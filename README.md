@@ -15,7 +15,7 @@ The design intent is described in https://docs.google.com/document/d/1zwUZ-VUmq2
 - Start the SITL simulation
 - Then run the tests in the `build` directory with:
   ```
-  (cd build && ./mavlink_testing_suite udp://)
+  (cd build && ./mavlink_testing_suite ../config/autopilot.yaml udp://)
   ```
 
 ### Fix Code Formatting and Style
