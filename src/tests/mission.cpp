@@ -126,16 +126,28 @@ void Mission::dropMessages(const float ratio)
     _mavlink_passthrough.intercept_incoming_messages_async(
         [this, ratio](mavlink_message_t& message) {
             UNUSED(message);
-            const bool should_keep = !_lossy_link_incoming.drop(ratio);
-            return should_keep;
+            return shouldDropMissionMessage(message, ratio);
         });
 
     _mavlink_passthrough.intercept_outgoing_messages_async(
         [this, ratio](mavlink_message_t& message) {
             UNUSED(message);
-            const bool should_keep = !_lossy_link_outgoing.drop(ratio);
-            return should_keep;
+            return shouldDropMissionMessage(message, ratio);
         });
+}
+
+bool Mission::shouldDropMissionMessage(const mavlink_message_t& message, const float ratio)
+{
+    bool should_keep = true;
+    if (message.msgid == MAVLINK_MSG_ID_MISSION_ITEM_INT ||
+        message.msgid == MAVLINK_MSG_ID_MISSION_REQUEST_INT ||
+        message.msgid == MAVLINK_MSG_ID_MISSION_COUNT ||
+        message.msgid == MAVLINK_MSG_ID_MISSION_REQUEST_LIST /* ||
+        message.msgid == MAVLINK_MSG_ID_MISSION_ACK*/) {
+        // TODO: we need to check if MISSION_ACK can be dropped.
+        should_keep = !_lossy_link_incoming.drop(ratio);
+    }
+    return should_keep;
 }
 
 }  // namespace tests
