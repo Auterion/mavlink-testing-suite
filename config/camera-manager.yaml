@@ -1,0 +1,4 @@
+tests:
+    - name: CameraSettings
+      camera_id: 2
+      param_name: wb-mode
