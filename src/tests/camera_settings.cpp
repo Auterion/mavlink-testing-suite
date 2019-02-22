@@ -1,9 +1,9 @@
 
 #include "camera_settings.h"
-#include <vector>
-#include <thread>
-#include <chrono>
 #include <algorithm>
+#include <chrono>
+#include <thread>
+#include <vector>
 
 using namespace std;
 using namespace dronecode_sdk;
@@ -12,8 +12,9 @@ namespace tests
 {
 REGISTER_TEST(CameraSettings);
 
-CameraSettings::CameraSettings(const Context& context) : TestBase(context), _camera(context.system) {}
-
+CameraSettings::CameraSettings(const Context& context) : TestBase(context), _camera(context.system)
+{
+}
 
 void CameraSettings::selectCamera()
 {
@@ -28,8 +29,9 @@ void CameraSettings::getPossibleSettings()
     std::vector<std::string> settings;
     _camera.get_possible_setting_options(settings);
 
-    const bool found_setting = std::any_of(std::begin(settings), std::end(settings),
-       [this](const std::string &setting) { return (setting.compare(_config.param_name) == 0); });
+    const bool found_setting =
+        std::any_of(std::begin(settings), std::end(settings),
+                    [this](const std::string& setting) { return (setting == _config.param_name); });
 
     EXPECT_EQ(found_setting, true);
 }
@@ -41,7 +43,8 @@ void CameraSettings::getAndSetPossibleOptions()
     _camera.get_possible_options(_config.param_name, options);
 
     for (const auto& option : options) {
-        std::cout << "- " << option.option_description << " (" << option.option_id << ")" << std::endl;
+        std::cout << "- " << option.option_description << " (" << option.option_id << ")"
+                  << std::endl;
 
         // TODO: Set option.
     }
