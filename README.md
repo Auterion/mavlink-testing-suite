@@ -10,12 +10,20 @@ The design intent is described in https://docs.google.com/document/d/1zwUZ-VUmq2
   ```
   (mkdir -p build && cd build && cmake .. && make)
   ```
-### Running the Test(s)
+### Running the Autopilot Tests
 
 - Start the SITL simulation
 - Then run the tests in the `build` directory with:
   ```
   (cd build && ./mavlink_testing_suite ../config/autopilot.yaml udp://)
+  ```
+
+### Running the Camera-Manager Tests
+
+- Start a camera-manager
+- Then run the tests in the `build` directory with:
+  ```
+  (cd build && ./mavlink_testing_suite ../config/camera-manager.yaml udp://)
   ```
 
 ### Fix Code Formatting and Style
