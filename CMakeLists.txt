@@ -51,7 +51,7 @@ target_link_libraries(mavlink_testing_suite
     dronecode_sdk
     dronecode_sdk_action
 	dronecode_sdk_mission
-	dronecode_sdk_params_raw
+	dronecode_sdk_param
 	dronecode_sdk_camera
 	dronecode_sdk_mavlink_passthrough
 	${CMAKE_CURRENT_BINARY_DIR}/build_yaml/libyaml-cpp.a
