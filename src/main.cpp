@@ -46,17 +46,21 @@ int main(int argc, char** argv)
     }
 
     std::cout << "Waiting to discover system..." << std::endl;
-    std::promise<void> prom{};
-    std::future<void> fut = prom.get_future();
+    auto prom = std::make_shared<std::promise<void>>();
+    std::future<void> fut = prom->get_future();
 
     System& system = dc.system();
-    system.register_component_discovered_callback([&prom](ComponentType component_type) {
+    system.register_component_discovered_callback([prom, &system](ComponentType component_type) {
         std::cout << NORMAL_CONSOLE_TEXT << "Discovered a component with type "
                   << unsigned(component_type) << std::endl;
         try {
-            prom.set_value();
+            prom->set_value();
+            // We only need to receive this once, now we can unsubscribe again.
+            system.register_component_discovered_callback(nullptr);
         } catch (const std::future_error& e) {
-            // Ignore if prom is set multiple times.
+            // Ignore if prom is set multiple times which can happen even though we're
+            // unsubscribing straightaway if the callback triggers two times in quick
+            // succession.
         }
     });
 
