@@ -37,6 +37,8 @@ private:
     void selectCamera();
     void getPossibleSettings();
     void getAndSetPossibleOptions();
+    dronecode_sdk::Camera::Option getOption(const std::string& setting_id);
+    void setOption(const std::string& setting_id, const dronecode_sdk::Camera::Option& option);
 
     dronecode_sdk::Camera _camera;
     Config _config;
