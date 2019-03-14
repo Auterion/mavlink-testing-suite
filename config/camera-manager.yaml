@@ -2,3 +2,6 @@ tests:
     - name: CameraSettings
       camera_id: 2
       param_name: wb-mode
+      param_value: 0
+      sub_param_name: wb-temp
+      sub_param_values: 4000

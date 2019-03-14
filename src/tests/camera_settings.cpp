@@ -17,6 +17,14 @@ CameraSettings::CameraSettings(const Context& context) : TestBase(context), _cam
 {
 }
 
+void CameraSettings::run()
+{
+    selectCamera();
+    getPossibleSettings();
+    getAndSetPossibleOptions();
+    setSettingWithSubSetting();
+}
+
 void CameraSettings::selectCamera()
 {
     _camera.select_camera(_config.camera_id);
@@ -51,7 +59,33 @@ void CameraSettings::getAndSetPossibleOptions()
         setOption(_config.param_name, option);
         Camera::Option set_option = getOption(_config.param_name);
         EXPECT_EQ(set_option, option);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
+    std::cout << "Resetting setting to initial option." << std::endl;
+    setOption(_config.param_name, initial_option);
+}
+
+void CameraSettings::setSettingWithSubSetting()
+{
+    Camera::Option initial_option = getOption(_config.param_name);
+
+    std::cout << "Getting possible settings for " << _config.param_name << std::endl;
+    std::vector<Camera::Option> options;
+    _camera.get_possible_options(_config.param_name, options);
+
+    bool option_available = false;
+    for (const auto& option : options) {
+        if (option.option_id != _config.param_value) {
+            continue;
+        }
+        option_available = true;
+        setOption(_config.param_name, option);
+
+        // TODO: add support for Options with range type (e.g. wb-temp 4000..10000).
+    }
+
+    EXPECT_EQ(option_available, true);
+
     std::cout << "Resetting setting to initial option." << std::endl;
     setOption(_config.param_name, initial_option);
 }
@@ -76,13 +110,6 @@ void CameraSettings::setOption(const std::string& setting_id, const Camera::Opti
     if (fut_ret == std::future_status::ready) {
         EXPECT_EQ(fut.get(), Camera::Result::SUCCESS);
     }
-}
-
-void CameraSettings::run()
-{
-    selectCamera();
-    getPossibleSettings();
-    getAndSetPossibleOptions();
 }
 
 }  // namespace tests

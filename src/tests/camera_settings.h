@@ -15,13 +15,19 @@ class CameraSettings : public TestBase
 {
 public:
     struct Config {
-        std::string param_name{};
         unsigned camera_id{};
+        std::string param_name{};
+        std::string param_value{};
+        std::string sub_param_name{};
+        std::string sub_param_value{};
 
         void serialize(ConfigProvider& c)
         {
-            c("param_name", param_name);
             c("camera_id", camera_id);
+            c("param_name", param_name);
+            c("param_value", param_value);
+            c("sub_param_name", sub_param_name);
+            c("sub_param_value", sub_param_value);
         }
     };
 
@@ -37,6 +43,8 @@ private:
     void selectCamera();
     void getPossibleSettings();
     void getAndSetPossibleOptions();
+    void setSettingWithSubSetting();
+
     dronecode_sdk::Camera::Option getOption(const std::string& setting_id);
     void setOption(const std::string& setting_id, const dronecode_sdk::Camera::Option& option);
 
