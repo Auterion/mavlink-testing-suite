@@ -59,7 +59,6 @@ void CameraSettings::getAndSetPossibleOptions()
         setOption(_config.param_name, option);
         Camera::Option set_option = getOption(_config.param_name);
         EXPECT_EQ(set_option, option);
-        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
     std::cout << "Resetting setting to initial option." << std::endl;
     setOption(_config.param_name, initial_option);
