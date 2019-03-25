@@ -3,7 +3,7 @@
 #include "base.h"
 
 #include <dronecode_sdk/dronecode_sdk.h>
-#include <dronecode_sdk/plugins/params_raw/params_raw.h>
+#include <dronecode_sdk/plugins/param/param.h>
 
 namespace tests
 {
@@ -45,7 +45,7 @@ private:
     bool isInt32();
     bool isFloat();
 
-    dronecode_sdk::ParamsRaw _params_raw;
+    dronecode_sdk::Param _param;
     Config _config;
 };
 
