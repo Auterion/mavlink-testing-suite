@@ -26,8 +26,8 @@ public:
             c("camera_id", camera_id);
             c("param_name", param_name);
             c("param_value", param_value);
-            c("sub_param_name", sub_param_name);
-            c("sub_param_value", sub_param_value);
+            c("sub_param_name", sub_param_name);    // FIXME: not used yet
+            c("sub_param_value", sub_param_value);  // FIXME: not used yet
         }
     };
 
