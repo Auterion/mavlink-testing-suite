@@ -70,9 +70,10 @@ file(GLOB_RECURSE MAVLINK_SUITE_FORMAT_SRCS
 	src/*.h src/*.cpp)
 if (CLANG_FORMAT_EXECUTABLE)
 	message(STATUS "Enabling format target")
-
 	add_custom_target(
         format ${CMAKE_CURRENT_SOURCE_DIR}/tools/run_clang_format.sh ${CLANG_FORMAT_EXECUTABLE} ${MAVLINK_SUITE_FORMAT_SRCS})
+else()
+    message(STATUS "Not enabling format target (clang-format not found)")
 endif()
 
 find_program(CLANG_TIDY_EXECUTABLE
@@ -84,6 +85,9 @@ find_program(CLANG_TIDY_EXECUTABLE
 	DOC "clang-tidy executable"
 )
 if (CLANG_TIDY_EXECUTABLE)
+	message(STATUS "Enabling clang-tidy target")
 	add_custom_target(
 		clang_tidy ${CLANG_TIDY_EXECUTABLE} -fix -header-filter="${CMAKE_CURRENT_LIST_DIR}/src/.*\\.[hpp|h]" -p ${CMAKE_CURRENT_BINARY_DIR} ${MAVLINK_SUITE_FORMAT_SRCS})
+else()
+    message(STATUS "Not enabling clang-tidy target (clang-tidy not found)")
 endif()
