@@ -3,11 +3,9 @@
 #include "base.h"
 #include "lossy_link.h"
 
-#include <dronecode_sdk/dronecode_sdk.h>
-#include <dronecode_sdk/plugins/mavlink_passthrough/mavlink_passthrough.h>
-#include <dronecode_sdk/plugins/mission/mission.h>
-
-namespace dcsdk = dronecode_sdk;
+#include <mavsdk/mavsdk.h>
+#include <mavsdk/plugins/mavlink_passthrough/mavlink_passthrough.h>
+#include <mavsdk/plugins/mission/mission.h>
 
 namespace tests
 {
@@ -40,20 +38,20 @@ protected:
 private:
     void uploadDownloadCompare();
     void eraseMission();
-    std::shared_ptr<dcsdk::MissionItem> makeMissionItem(double latitude_deg, double longitude_deg,
-                                                        float relative_altitude_m);
+    std::shared_ptr<mavsdk::MissionItem> makeMissionItem(double latitude_deg, double longitude_deg,
+                                                         float relative_altitude_m);
 
-    std::vector<std::shared_ptr<dcsdk::MissionItem>> assembleMissionItems();
-    void uploadMission(const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items);
-    std::vector<std::shared_ptr<dcsdk::MissionItem>> downloadMission();
-    void compareMissions(const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items_a,
-                         const std::vector<std::shared_ptr<dcsdk::MissionItem>>& items_b);
+    std::vector<std::shared_ptr<mavsdk::MissionItem>> assembleMissionItems();
+    void uploadMission(const std::vector<std::shared_ptr<mavsdk::MissionItem>>& items);
+    std::vector<std::shared_ptr<mavsdk::MissionItem>> downloadMission();
+    void compareMissions(const std::vector<std::shared_ptr<mavsdk::MissionItem>>& items_a,
+                         const std::vector<std::shared_ptr<mavsdk::MissionItem>>& items_b);
 
     void dropMessages(float ratio);
     bool shouldDropMissionMessage(const mavlink_message_t& message, float ratio);
 
-    dcsdk::Mission _mission;
-    dcsdk::MavlinkPassthrough _mavlink_passthrough;
+    mavsdk::Mission _mission;
+    mavsdk::MavlinkPassthrough _mavlink_passthrough;
     Config _config;
 
     LossyLink _lossy_link_incoming;

@@ -33,17 +33,17 @@ Before committing, make sure to run the code formatting and tidying using clang.
 (cd build && make format; make clang_tidy)
 ```
 
-## Use custom Dronecode SDK build
+## Use custom MAVSDK build
 
-For debugging purposes it can be handy to use a custom version of the Dronecode SDK:
+For debugging purposes it can be handy to use a custom version of MAVSDK:
 
 ```
-cd <wherever>/DronecodeSDK
+cd <wherever>/MAVSDK
 make clean
 export DRONECODE_SDK_INSTALL_DIR=$(pwd)/install
-make ENABLE_MAVLINK_PASSTHROUGH=1 INSTALL_PREFIX=$DRONECODE_SDK_INSTALL_DIR default install
+make ENABLE_MAVLINK_PASSTHROUGH=1 INSTALL_PREFIX=$MAVSDK_INSTALL_DIR default install
 cd <wherever>/mavlink-testing-suite
-(mkdir -p build && cd build && cmake -DDRONECODE_SDK_INSTALL_DIR=$DRONECODE_SDK_INSTALL_DIR .. && make)
+(mkdir -p build && cd build && cmake -DDRONECODE_SDK_INSTALL_DIR=$MAVSDK_INSTALL_DIR .. && make)
 ```
 
 ### Sample Output of the Autopilot Tests
