@@ -63,7 +63,7 @@ std::vector<std::shared_ptr<mavsdk::MissionItem>> Mission::assembleMissionItems(
     std::vector<std::shared_ptr<mavsdk::MissionItem>> items{};
 
     for (int i = 0; i < _config.num_waypoints; ++i) {
-        float altitude = 10.f + (float)i;
+        float altitude = 10.F + (float)i;
         double latitude = 47.398170327054473 + (double)i * 1e-5;
         items.push_back(makeMissionItem(latitude, 8.5456490218639658, altitude));
     }
@@ -94,7 +94,7 @@ std::vector<std::shared_ptr<mavsdk::MissionItem>> Mission::downloadMission()
 
     _mission.download_mission_async(
         [&prom](mavsdk::Mission::Result result,
-                std::vector<std::shared_ptr<mavsdk::MissionItem>> items) {
+                const std::vector<std::shared_ptr<mavsdk::MissionItem>>& items) {
             prom.set_value(make_pair(result, items));
         });
 

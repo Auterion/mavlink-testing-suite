@@ -18,7 +18,7 @@ class Mission : public TestBase
 public:
     struct Config {
         int num_waypoints{10};
-        float message_loss{0.0f};
+        float message_loss{0.0F};
 
         void serialize(ConfigProvider& c)
         {

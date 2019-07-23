@@ -17,8 +17,8 @@ public:
     struct Config {
         std::string name{};
         std::string type{};
-        float set_value{0.0f};
-        float reset_value{0.0f};
+        float set_value{0.0F};
+        float reset_value{0.0F};
 
         void serialize(ConfigProvider& c)
         {
