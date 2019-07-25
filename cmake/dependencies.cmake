@@ -13,7 +13,7 @@ else()
             -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk/install
             -DENABLE_MAVLINK_PASSTHROUGH=1
             GIT_REPOSITORY https://github.com/mavlink/MAVSDK.git
-        GIT_TAG bd1e3086b2b4c662e20a0c23ec59f3fbb5c27855
+            GIT_TAG f4065b3fb56e65674d045a3406cfb9c2536fcf65
         BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk
         INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
         )

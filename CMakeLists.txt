@@ -30,9 +30,6 @@ if(MSVC)
     add_definitions("-WX -W2")
 else()
     add_definitions("-Wall -Wextra -Werror")
-    # workaround for
-    # error: taking address of packed member of in mavlink include
-    add_definitions("-Wno-address-of-packed-member")
 endif()
 
 include(cmake/dependencies.cmake)
