@@ -20,6 +20,8 @@ else()
     include_directories(${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk/install/include)
     # Hack needed for plugin_base.h include.
     include_directories(${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk/install/include/mavsdk)
+    # Whichever path works :)
+    link_directories(${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk/install/lib)
     link_directories(${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk/install/lib64)
     list(APPEND dependencies third_party_mavsdk)
 endif()
