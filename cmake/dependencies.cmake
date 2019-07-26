@@ -1,25 +1,29 @@
 include(ExternalProject)
 
 
-if(DRONECODE_SDK_INSTALL_DIR)
-    message(STATUS "Using DronecodeSDK from: ${DRONECODE_SDK_INSTALL_DIR}")
-    include_directories(${DRONECODE_SDK_INSTALL_DIR}/include)
-    link_directories(${DRONECODE_SDK_INSTALL_DIR}/lib)
+if(MAVSDK_INSTALL_DIR)
+    message(STATUS "Using MAVSDK from: ${MAVSDK_INSTALL_DIR}")
+    include_directories(${MAVSDK_INSTALL_DIR}/include)
+    link_directories(${MAVSDK_INSTALL_DIR}/lib)
 else()
-    # clone and build SDK via ExternalProject
-    ExternalProject_Add(third_party_dronecode_sdk
-        SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/DronecodeSDK
+    # clone and build MAVSDK via ExternalProject
+    ExternalProject_Add(third_party_mavsdk
+        SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/MAVSDK
         CMAKE_ARGS
-            -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk/install
+            -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk/install
             -DENABLE_MAVLINK_PASSTHROUGH=1
-        GIT_REPOSITORY https://github.com/Dronecode/DronecodeSDK.git
-        GIT_TAG a615e52c34dc5fcba266215f6959667108a0b8fd
-        BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk
+            GIT_REPOSITORY https://github.com/mavlink/MAVSDK.git
+            GIT_TAG f4065b3fb56e65674d045a3406cfb9c2536fcf65
+        BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk
         INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
         )
-    include_directories(${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk/install/include)
-    link_directories(${CMAKE_CURRENT_BINARY_DIR}/build_dronecode_sdk/install/lib)
-    list(APPEND dependencies third_party_dronecode_sdk)
+    include_directories(${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk/install/include)
+    # Hack needed for plugin_base.h include.
+    include_directories(${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk/install/include/mavsdk)
+    # Whichever path works :)
+    link_directories(${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk/install/lib)
+    link_directories(${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk/install/lib64)
+    list(APPEND dependencies third_party_mavsdk)
 endif()
 
 

@@ -2,8 +2,8 @@
 
 #include "base.h"
 
-#include <dronecode_sdk/dronecode_sdk.h>
-#include <dronecode_sdk/plugins/camera/camera.h>
+#include <mavsdk/mavsdk.h>
+#include <mavsdk/plugins/camera/camera.h>
 
 namespace tests
 {
@@ -45,10 +45,10 @@ private:
     void getAndSetPossibleOptions();
     void setSettingWithSubSetting();
 
-    dronecode_sdk::Camera::Option getOption(const std::string& setting_id);
-    void setOption(const std::string& setting_id, const dronecode_sdk::Camera::Option& option);
+    mavsdk::Camera::Option getOption(const std::string& setting_id);
+    void setOption(const std::string& setting_id, const mavsdk::Camera::Option& option);
 
-    dronecode_sdk::Camera _camera;
+    mavsdk::Camera _camera;
     Config _config;
 };
 

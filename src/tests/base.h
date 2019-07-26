@@ -1,6 +1,6 @@
 #pragma once
 
-#include <dronecode_sdk/dronecode_sdk.h>
+#include <mavsdk/mavsdk.h>
 #include <yaml-cpp/yaml.h>
 #include "streamable.h"
 
@@ -21,7 +21,7 @@ namespace tests
  * Data that is supplied to each test
  */
 struct Context {
-    dronecode_sdk::System& system;
+    mavsdk::System& system;
     // TODO: logging, ...
 };
 

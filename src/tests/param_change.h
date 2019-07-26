@@ -2,8 +2,8 @@
 
 #include "base.h"
 
-#include <dronecode_sdk/dronecode_sdk.h>
-#include <dronecode_sdk/plugins/param/param.h>
+#include <mavsdk/mavsdk.h>
+#include <mavsdk/plugins/param/param.h>
 
 namespace tests
 {
@@ -17,8 +17,8 @@ public:
     struct Config {
         std::string name{};
         std::string type{};
-        float set_value{0.0f};
-        float reset_value{0.0f};
+        float set_value{0.0F};
+        float reset_value{0.0F};
 
         void serialize(ConfigProvider& c)
         {
@@ -45,7 +45,7 @@ private:
     bool isInt32();
     bool isFloat();
 
-    dronecode_sdk::Param _param;
+    mavsdk::Param _param;
     Config _config;
 };
 

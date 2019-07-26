@@ -48,12 +48,12 @@ add_dependencies(mavlink_testing_suite
     )
 
 target_link_libraries(mavlink_testing_suite
-    dronecode_sdk
-    dronecode_sdk_action
-	dronecode_sdk_mission
-	dronecode_sdk_param
-	dronecode_sdk_camera
-	dronecode_sdk_mavlink_passthrough
+    mavsdk
+    mavsdk_action
+	mavsdk_mission
+	mavsdk_param
+	mavsdk_camera
+	mavsdk_mavlink_passthrough
 	${CMAKE_CURRENT_BINARY_DIR}/build_yaml/libyaml-cpp.a
 )
 

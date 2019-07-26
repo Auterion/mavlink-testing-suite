@@ -8,11 +8,11 @@
 #include <thread>
 #include <vector>
 
-#include <dronecode_sdk/dronecode_sdk.h>
+#include <mavsdk/mavsdk.h>
 
 #include "tests/base.h"
 
-using namespace dronecode_sdk;
+using namespace mavsdk;
 
 #define ERROR_CONSOLE_TEXT "\033[31m"      // Turn text on console red
 #define TELEMETRY_CONSOLE_TEXT "\033[34m"  // Turn text on console blue
@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 {
     ConnectionResult connection_result;
 
-    DronecodeSDK dc;
+    Mavsdk mavsdk;
 
     if (argc != 3) {
         std::cout << "Must specify a config file and a connection" << std::endl;
@@ -36,7 +36,7 @@ int main(int argc, char** argv)
     // For TCP : tcp://[server_host][:server_port]
     // For UDP : udp://[bind_host][:bind_port]
     // For Serial : serial:///path/to/serial/dev[:baudrate]
-    connection_result = dc.add_any_connection(connection_url);
+    connection_result = mavsdk.add_any_connection(connection_url);
 
     if (connection_result != ConnectionResult::SUCCESS) {
         std::cout << ERROR_CONSOLE_TEXT
@@ -49,7 +49,7 @@ int main(int argc, char** argv)
     auto prom = std::make_shared<std::promise<void>>();
     std::future<void> fut = prom->get_future();
 
-    System& system = dc.system();
+    System& system = mavsdk.system();
     system.register_component_discovered_callback([prom, &system](ComponentType component_type) {
         std::cout << NORMAL_CONSOLE_TEXT << "Discovered a component with type "
                   << unsigned(component_type) << std::endl;

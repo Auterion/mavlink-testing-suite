@@ -9,7 +9,7 @@
 #include <vector>
 
 using namespace std;
-using namespace dronecode_sdk;
+using namespace mavsdk;
 
 namespace tests
 {
