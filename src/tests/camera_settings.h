@@ -18,16 +18,12 @@ public:
         unsigned camera_id{};
         std::string param_name{};
         std::string param_value{};
-        std::string sub_param_name{};
-        std::string sub_param_value{};
 
         void serialize(ConfigProvider& c)
         {
             c("camera_id", camera_id);
             c("param_name", param_name);
             c("param_value", param_value);
-            c("sub_param_name", sub_param_name);    // FIXME: not used yet
-            c("sub_param_value", sub_param_value);  // FIXME: not used yet
         }
     };
 
@@ -43,7 +39,7 @@ private:
     void selectCamera();
     void getPossibleSettings();
     void getAndSetPossibleOptions();
-    void setSettingWithSubSetting();
+    void setSetting();
 
     mavsdk::Camera::Option getOption(const std::string& setting_id);
     void setOption(const std::string& setting_id, const mavsdk::Camera::Option& option);

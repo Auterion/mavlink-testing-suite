@@ -22,7 +22,7 @@ void CameraSettings::run()
     selectCamera();
     getPossibleSettings();
     getAndSetPossibleOptions();
-    setSettingWithSubSetting();
+    setSetting();
 }
 
 void CameraSettings::selectCamera()
@@ -64,7 +64,7 @@ void CameraSettings::getAndSetPossibleOptions()
     setOption(_config.param_name, initial_option);
 }
 
-void CameraSettings::setSettingWithSubSetting()
+void CameraSettings::setSetting()
 {
     Camera::Option initial_option = getOption(_config.param_name);
 
