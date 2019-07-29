@@ -12,7 +12,11 @@
 #include <type_traits>
 #include <utility>
 
-#define UNUSED(x) (void)(x)
+template <typename T>
+inline void unused(T t)
+{
+    (void)(t);
+}
 
 namespace tests
 {

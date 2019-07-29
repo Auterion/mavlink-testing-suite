@@ -14,9 +14,8 @@
 
 using namespace mavsdk;
 
-#define ERROR_CONSOLE_TEXT "\033[31m"      // Turn text on console red
-#define TELEMETRY_CONSOLE_TEXT "\033[34m"  // Turn text on console blue
-#define NORMAL_CONSOLE_TEXT "\033[0m"      // Restore normal console colour
+auto constexpr error_console_text = "\033[31m";  // Turn text on console red
+auto constexpr normal_console_text = "\033[0m";  // Restore normal console colour
 
 int main(int argc, char** argv)
 {
@@ -39,9 +38,9 @@ int main(int argc, char** argv)
     connection_result = mavsdk.add_any_connection(connection_url);
 
     if (connection_result != ConnectionResult::SUCCESS) {
-        std::cout << ERROR_CONSOLE_TEXT
+        std::cout << error_console_text
                   << "Connection failed: " << connection_result_str(connection_result)
-                  << NORMAL_CONSOLE_TEXT << std::endl;
+                  << normal_console_text << std::endl;
         return 1;
     }
 
@@ -51,7 +50,7 @@ int main(int argc, char** argv)
 
     System& system = mavsdk.system();
     system.register_component_discovered_callback([prom, &system](ComponentType component_type) {
-        std::cout << NORMAL_CONSOLE_TEXT << "Discovered a component with type "
+        std::cout << normal_console_text << "Discovered a component with type "
                   << unsigned(component_type) << std::endl;
         try {
             prom->set_value();
@@ -65,7 +64,7 @@ int main(int argc, char** argv)
     });
 
     if (fut.wait_for(std::chrono::seconds(2)) == std::future_status::timeout) {
-        std::cout << ERROR_CONSOLE_TEXT << "No MAVLink component found" << NORMAL_CONSOLE_TEXT
+        std::cout << error_console_text << "No MAVLink component found" << normal_console_text
                   << std::endl;
         return 1;
     }
