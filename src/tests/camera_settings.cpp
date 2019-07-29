@@ -6,7 +6,6 @@
 #include <thread>
 #include <vector>
 
-using namespace std;
 using namespace mavsdk;
 
 namespace tests
@@ -20,19 +19,18 @@ CameraSettings::CameraSettings(const Context& context) : TestBase(context), _cam
 void CameraSettings::run()
 {
     selectCamera();
-    getPossibleSettings();
+    getPossibleSettingOptions();
     getAndSetPossibleOptions();
-    setSetting();
 }
 
 void CameraSettings::selectCamera()
 {
     _camera.select_camera(_config.camera_id);
     // FIXME: we need to let the camera plugin initialize after this.
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::seconds(3));
 }
 
-void CameraSettings::getPossibleSettings()
+void CameraSettings::getPossibleSettingOptions()
 {
     std::cout << "Checking if " << _config.param_name << " is a possible setting." << std::endl;
     std::vector<std::string> settings;
@@ -49,6 +47,23 @@ void CameraSettings::getAndSetPossibleOptions()
 {
     Camera::Option initial_option = getOption(_config.param_name);
 
+    bool is_range = _camera.is_setting_range(_config.param_name);
+    ASSERT_EQ(_config.param_is_range, is_range);
+
+    if (is_range) {
+        setSomeRangeOptions();
+    } else {
+        setAllEnumOptions();
+    }
+
+    std::cout << "Resetting setting to initial option." << std::endl;
+    setOption(_config.param_name, initial_option);
+}
+
+void CameraSettings::setAllEnumOptions()
+{
+    Camera::Option initial_option = getOption(_config.param_name);
+
     std::cout << "Getting possible settings for " << _config.param_name << std::endl;
     std::vector<Camera::Option> options;
     _camera.get_possible_options(_config.param_name, options);
@@ -60,33 +75,61 @@ void CameraSettings::getAndSetPossibleOptions()
         Camera::Option set_option = getOption(_config.param_name);
         EXPECT_EQ(set_option, option);
     }
-    std::cout << "Resetting setting to initial option." << std::endl;
-    setOption(_config.param_name, initial_option);
 }
 
-void CameraSettings::setSetting()
+void CameraSettings::setSomeRangeOptions()
 {
-    Camera::Option initial_option = getOption(_config.param_name);
-
-    std::cout << "Getting possible settings for " << _config.param_name << std::endl;
+    std::cout << "Getting range properties for " << _config.param_name << std::endl;
     std::vector<Camera::Option> options;
     _camera.get_possible_options(_config.param_name, options);
 
-    bool option_available = false;
-    for (const auto& option : options) {
-        if (option.option_id != _config.param_value) {
-            continue;
-        }
-        option_available = true;
-        setOption(_config.param_name, option);
+    ASSERT_EQ(options.size() >= 2, true);
+    ASSERT_EQ(options.size() <= 3, true);
 
-        // TODO: add support for Options with range type (e.g. wb-temp 4000..10000).
+    // FIXME: dealing with this interface is not great and needs improvement.
+
+    const auto& minimum = std::atoi(options[0].option_id.c_str());
+    {
+        Camera::Option new_option;
+        new_option.option_id = std::to_string(minimum);
+        setOption(_config.param_name, new_option);
+        Camera::Option set_option = getOption(_config.param_name);
+        EXPECT_EQ(set_option, new_option);
     }
 
-    EXPECT_EQ(option_available, true);
+    const auto& maximum = std::atoi(options[1].option_id.c_str());
+    {
+        Camera::Option new_option;
+        new_option.option_id = std::to_string(maximum);
+        setOption(_config.param_name, new_option);
+        Camera::Option set_option = getOption(_config.param_name);
+        EXPECT_EQ(set_option, new_option);
+    }
 
-    std::cout << "Resetting setting to initial option." << std::endl;
-    setOption(_config.param_name, initial_option);
+    EXPECT_EQ(maximum > minimum, true);
+
+    if (options.size() == 2) {
+        // We are only given min and max, no interval so any increment should work.
+        const auto& center = (maximum - minimum) / 2 + minimum;
+        Camera::Option new_option;
+        new_option.option_id = std::to_string(center);
+        setOption(_config.param_name, new_option);
+        Camera::Option set_option = getOption(_config.param_name);
+        EXPECT_EQ(set_option.option_id, std::to_string(center));
+
+    } else {
+        const auto& interval = std::atoi(options[2].option_id.c_str());
+
+        EXPECT_EQ((maximum - minimum) % interval == 0, true);
+
+        // We use the interval to get something close to the center.
+        const auto& center = ((maximum - minimum) / 2) / interval * interval;
+        Camera::Option new_option;
+        new_option.option_id = std::to_string(center);
+        setOption(_config.param_name, new_option);
+        Camera::Option set_option = getOption(_config.param_name);
+        EXPECT_EQ(set_option.option_id, std::to_string(center));
+    }
 }
 
 Camera::Option CameraSettings::getOption(const std::string& setting_id)

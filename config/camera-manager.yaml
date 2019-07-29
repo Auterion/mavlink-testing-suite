@@ -2,11 +2,21 @@ tests:
   - name: CameraSettings
     camera_id: 2
     param_name: wb-mode
-    param_value: 0
+    param_is_range: false
 
   - name: CameraSettings
     camera_id: 2
     param_name: exp-mode
-    param_value: 3
+    param_is_range: false
+
+  - name: CameraSettings
+    camera_id: 2
+    param_name: contrast
+    param_is_range: true
+
+  - name: CameraSettings
+    camera_id: 2
+    param_name: brightness
+    param_is_range: true
 
 
