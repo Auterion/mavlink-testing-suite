@@ -2,8 +2,7 @@
 
 [![Build Status](https://travis-ci.org/Auterion/mavlink-testing-suite.svg?branch=master)](https://travis-ci.org/Auterion/mavlink-testing-suite)
 
-This project aims to provide a testing suite to test standard compliance of
-MAVLink-enabled components/systems.
+This project aims to provide a testing suite to test standard compliance of MAVLink-enabled components/systems.
 The design intent is described in https://docs.google.com/document/d/1zwUZ-VUmq2pmCuGn1kY6BRS48-GiSXcMO5TUfnTpqmI
 
 - Build the testing suite:
@@ -12,19 +11,34 @@ The design intent is described in https://docs.google.com/document/d/1zwUZ-VUmq2
   ```
 ### Running the Autopilot Tests
 
-- Start the SITL simulation
-- Then run the tests in the `build` directory with:
-  ```
-  (cd build && ./mavlink_testing_suite ../config/autopilot.yaml udp://)
-  ```
+1. Start the SITL simulation:
+    ```
+    make px4_sitl jmavsim
+    ```
+
+2. Then run the tests in the `build` directory with:
+    ```
+    (cd build && ./mavlink_testing_suite ../config/autopilot.yaml udp://)
+    ```
 
 ### Running the Camera-Manager Tests
 
-- Start a camera-manager
-- Then run the tests in the `build` directory with:
-  ```
-  (cd build && ./mavlink_testing_suite ../config/camera-manager.yaml udp://)
-  ```
+1. Start the camera-manager:
+    ```
+    ./dcm -c samples/config/ubuntu.conf -g debug
+    ```
+2. Start the camera-manager http server to serve the camera definition file:
+    ```
+    python -m SimpleHTTPServer
+    ```
+
+3. Then run the tests in the `build` directory with:
+    ```
+    (cd build && ./mavlink_testing_suite ../config/camera-manager.yaml udp://:14550)
+    ```
+
+**Note:**
+The `camera_id` in [camera-manager.yaml](config/camera-manager.yaml) might need to be adapted based on the camera that camera-manager exposes and you want to test against.
 
 ### Fix Code Formatting and Style
 
@@ -49,55 +63,110 @@ cd <wherever>/mavlink-testing-suite
 ### Sample Output of the Autopilot Tests
 This is the output of a successful test run:
 ```
-[10:56:54|Info ] DronecodeSDK version: 0.9.0 (dronecode_sdk_impl.cpp:24)
-[10:56:54|Debug] New: System ID: 0 Comp ID: 0 (dronecode_sdk_impl.cpp:288)
+[10:03:01|Info ] MAVSDK version: 0.18.3-56-g730a0ef5 (mavsdk_impl.cpp:25)
 Waiting to discover system...
-[10:56:54|Info ] New device on: 127.0.0.1:14580 (udp_connection.cpp:200)
-[10:56:54|Debug] Component Autopilot (1) added. (system_impl.cpp:369)
-[10:56:54|Debug] Discovered 1 component(s) (UUID: 5283920058631409231) (system_impl.cpp:509)
-Discovered system with UUID: 5283920058631409231
-[10:56:55|Debug] MAVLink: info: data link #1 lost (system_impl.cpp:280)
-[10:56:55|Debug] MAVLink: info: data link #1 regained (system_impl.cpp:280)
+[10:03:01|Debug] New: System ID: 0 Comp ID: 0 (mavsdk_impl.cpp:361)
+[10:03:01|Info ] New system on: 127.0.0.1:14580 (udp_connection.cpp:231)
+[10:03:01|Debug] Component Autopilot (1) added. (system_impl.cpp:399)
 Discovered a component with type 1
-number of waypoints: 50
+[10:03:02|Debug] Discovered 1 component(s) (UUID: 5283920058631409231) (system_impl.cpp:563)
+[10:03:02|Debug] MAVLink: critical: Data link lost (system_impl.cpp:306)
+[10:03:02|Debug] MAVLink: info: Data link regained (system_impl.cpp:306)
+Number of waypoints: 50
 Uploading mission...
-[10:56:56|Debug] Send mission item 0 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 1 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 2 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 3 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 4 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 5 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 6 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 7 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 8 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 9 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 10 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 11 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 12 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 13 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 14 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 15 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 16 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 17 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 18 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 19 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 20 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 21 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 22 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 23 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 24 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 25 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 26 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 27 (mission_impl.cpp:996)
-[10:56:56|Debug] Send mission item 28 (mission_impl.cpp:996)
-[10:56:56|Info ] Mission accepted (mission_impl.cpp:163)
-Mission uploaded.
-MissionUpload test result: Success
-Setting param SYS_HITL to 1
-Checking param SYS_HITL is 1
-Setting param SYS_HITL to 0
-Checking param SYS_HITL is 0
+[10:03:04|Debug] Send mission item 0 (mission_impl.cpp:1132)
+[10:03:04|Debug] Send mission item 1 (mission_impl.cpp:1132)
+[10:03:04|Debug] Send mission item 2 (mission_impl.cpp:1132)
+[10:03:04|Debug] Send mission item 3 (mission_impl.cpp:1132)
+
+...
+
+[10:03:04|Debug] Send mission item 47 (mission_impl.cpp:1132)
+[10:03:04|Debug] Send mission item 48 (mission_impl.cpp:1132)
+[10:03:04|Debug] Send mission item 49 (mission_impl.cpp:1132)
+[10:03:04|Info ] Mission accepted (mission_impl.cpp:166)
+Downloading mission...
+[10:03:04|Debug] Requested mission item 0 (mission_impl.cpp:1007)
+[10:03:04|Debug] Received mission item 0 (mission_impl.cpp:282)
+[10:03:04|Debug] Requested mission item 1 (mission_impl.cpp:1007)
+[10:03:04|Debug] Received mission item 1 (mission_impl.cpp:282)
+[10:03:04|Debug] Requested mission item 2 (mission_impl.cpp:1007)
+[10:03:04|Debug] Received mission item 2 (mission_impl.cpp:282)
+[10:03:04|Debug] Requested mission item 3 (mission_impl.cpp:1007)
+
+...
+
+[10:03:04|Debug] Assembling Message: 47 (mission_impl.cpp:883)
+[10:03:04|Debug] Assembling Message: 48 (mission_impl.cpp:883)
+[10:03:04|Debug] Assembling Message: 49 (mission_impl.cpp:883)
+Mission test result: Success
+----
+Number of waypoints: 50
+Uploading mission...
+[10:03:07|Debug] Dropped outgoing message: 44 (system_impl.cpp:496)
+[10:03:08|Warn ] Retrying send mission count... (mission_impl.cpp:1352)
+[10:03:08|Debug] Dropped incoming message: 51 (system_impl.cpp:136)
+[10:03:08|Warn ] Retrying send mission count... (mission_impl.cpp:1352)
+[10:03:08|Debug] Send mission item 0 (mission_impl.cpp:1132)
+[10:03:08|Debug] Dropped incoming message: 51 (system_impl.cpp:136)
+[10:03:08|Warn ] Retrying send mission count... (mission_impl.cpp:1355)
+[10:03:08|Debug] Send mission item 0 (mission_impl.cpp:1132)
+[10:03:08|Debug] Dropped incoming message: 51 (system_impl.cpp:136)
+[10:03:09|Warn ] Retrying send mission count... (mission_impl.cpp:1355)
+[10:03:09|Debug] Send mission item 0 (mission_impl.cpp:1132)
+[10:03:09|Debug] Dropped outgoing message: 73 (system_impl.cpp:496)
+[10:03:09|Debug] Send mission item 1 (mission_impl.cpp:1132)
+[10:03:09|Debug] Send mission item 2 (mission_impl.cpp:1132)
+[10:03:09|Debug] Send mission item 3 (mission_impl.cpp:1132)
+
+...
+
+[10:03:30|Debug] Assembling Message: 47 (mission_impl.cpp:883)
+[10:03:30|Debug] Assembling Message: 48 (mission_impl.cpp:883)
+[10:03:30|Debug] Assembling Message: 49 (mission_impl.cpp:883)
+Mission test result: Success
+----
+Resetting int32 param SYS_HITL to 1
+Checking set param SYS_HITL is 1
+Setting int32 param SYS_HITL to 0
+Checking reset param SYS_HITL is 0
 ParamChange test result: Success
+----
+Resetting float param MPC_XY_CRUISE to 10
+Checking set param MPC_XY_CRUISE is 10
+Setting float param MPC_XY_CRUISE to 5
+Checking reset param MPC_XY_CRUISE is 5
+ParamChange test result: Success
+----
+Test summary:
+Mission:
+name: Mission
+num_waypoints: 50
+message_loss: 0
+  => passed
+----
+Mission:
+name: Mission
+num_waypoints: 50
+message_loss: 0.25
+  => passed
+----
+ParamChange:
+name: ParamChange
+param_name: SYS_HITL
+param_type: int32
+param_set_value: 1
+param_reset_value: 0
+  => passed
+----
+ParamChange:
+name: ParamChange
+param_name: MPC_XY_CRUISE
+param_type: float
+param_set_value: 10
+param_reset_value: 5
+  => passed
+----
 ```
 
 And an unsuccessful run, where handling of `MISSION_COUNT` on the autopilot is
@@ -122,46 +191,114 @@ MissionUpload test result: Failed
 This is the output of a successful test run:
 
 ```
-[12:03:36|Info ] DronecodeSDK version: 0.14.2-34-g215e3bd6 (dronecode_sdk_impl.cpp:25)
+[09:41:23|Info ] MAVSDK version: 0.18.3-56-g730a0ef5 (mavsdk_impl.cpp:25)
 Waiting to discover system...
-[12:03:36|Debug] New: System ID: 0 Comp ID: 0 (dronecode_sdk_impl.cpp:285)
-[12:03:36|Info ] New system on: 127.0.0.1:50124 (udp_connection.cpp:225)
-[12:03:36|Debug] Component Camera 1 (100) added. (system_impl.cpp:385)
+[09:41:23|Debug] New: System ID: 0 Comp ID: 0 (mavsdk_impl.cpp:361)
+[09:41:24|Info ] New system on: 127.0.0.1:58873 (udp_connection.cpp:231)
+[09:41:24|Debug] Component Camera 1 (100) added. (system_impl.cpp:399)
 Discovered a component with type 2
-[12:03:36|Debug] Component Camera 2 (101) added. (system_impl.cpp:385)
+[09:41:24|Debug] Component Camera 2 (101) added. (system_impl.cpp:399)
 Discovered a component with type 2
-[12:03:36|Debug] Component Camera 3 (102) added. (system_impl.cpp:385)
-[12:03:36|Debug] Component Camera 4 (103) added. (system_impl.cpp:385)
-[12:03:36|Debug] request camera info (camera_impl.cpp:123)
-[12:03:36|Debug] downloading camera definition file from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:924)
-[12:03:36|Info ] Downloading camera definition from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:1145)
-[12:03:37|Debug] request camera info (camera_impl.cpp:123)
-[12:03:37|Warn ] sending again, retries to do: 3  (528). (mavlink_commands.cpp:219)
-[12:03:38|Warn ] sending again, retries to do: 2  (528). (mavlink_commands.cpp:219)
-[12:03:38|Warn ] sending again, retries to do: 1  (528). (mavlink_commands.cpp:219)
+[09:41:24|Debug] Component Camera 3 (102) added. (system_impl.cpp:399)
+[09:41:24|Debug] Component Camera 4 (103) added. (system_impl.cpp:399)
+[09:41:24|Debug] request camera info (camera_impl.cpp:142)
+[09:41:24|Debug] downloading camera definition file from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:931)
+[09:41:24|Info ] Downloading camera definition from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:1171)
+[09:41:24|Debug] request camera info (camera_impl.cpp:142)
+[09:41:24|Warn ] sending again, retries to do: 3  (528). (mavlink_commands.cpp:222)
+[09:41:25|Warn ] sending again, retries to do: 2  (528). (mavlink_commands.cpp:222)
+[09:41:25|Warn ] sending again, retries to do: 1  (528). (mavlink_commands.cpp:222)
+[09:41:26|Error] Retrying failed (528) (mavlink_commands.cpp:239)
+[09:41:26|Debug] downloading camera definition file from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:931)
+[09:41:26|Info ] Downloading camera definition from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:1171)
+[09:41:27|Warn ] sending again, retries to do: 3  (528). (mavlink_commands.cpp:222)
 Checking if wb-mode is a possible setting.
+Getting option for wb-mode
 Getting option for wb-mode
 Getting possible settings for wb-mode
 - Manual Mode (0)
 Setting wb-mode to 0
 Getting option for wb-mode
-[12:03:39|Error] Retrying failed (528) (mavlink_commands.cpp:235)
-[12:03:39|Debug] downloading camera definition file from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:924)
-[12:03:39|Info ] Downloading camera definition from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:1145)
-[12:03:39|Warn ] sending again, retries to do: 3  (528). (mavlink_commands.cpp:219)
 - Auto (1)
 Setting wb-mode to 1
+[09:41:27|Warn ] sending again, retries to do: 2  (528). (mavlink_commands.cpp:222)
 Getting option for wb-mode
-[12:03:40|Warn ] sending again, retries to do: 2  (528). (mavlink_commands.cpp:219)
-[12:03:40|Warn ] sending again, retries to do: 1  (528). (mavlink_commands.cpp:219)
 Resetting setting to initial option.
 Setting wb-mode to 1
-[12:03:41|Error] Retrying failed (528) (mavlink_commands.cpp:235)
-Getting option for wb-mode
-Getting possible settings for wb-mode
-Setting wb-mode to 0
+CameraSettings test result: Success
+----
+[09:41:27|Debug] request camera info (camera_impl.cpp:142)
+[09:41:28|Warn ] sending again, retries to do: 1  (528). (mavlink_commands.cpp:222)
+[09:41:28|Debug] request camera info (camera_impl.cpp:142)
+[09:41:28|Error] Retrying failed (528) (mavlink_commands.cpp:239)
+[09:41:28|Debug] downloading camera definition file from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:931)
+[09:41:28|Info ] Downloading camera definition from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:1171)
+[09:41:29|Warn ] sending again, retries to do: 3  (528). (mavlink_commands.cpp:222)
+[09:41:29|Warn ] sending again, retries to do: 2  (528). (mavlink_commands.cpp:222)
+[09:41:30|Warn ] sending again, retries to do: 1  (528). (mavlink_commands.cpp:222)
+Checking if exp-mode is a possible setting.
+Getting option for exp-mode
+Getting option for exp-mode
+Getting possible settings for exp-mode
+- Manual Mode (1)
+Setting exp-mode to 1
+[09:41:30|Error] Retrying failed (528) (mavlink_commands.cpp:239)
+Getting option for exp-mode
+- Aperture Priority Mode (3)
+Setting exp-mode to 3
+[09:41:30|Debug] downloading camera definition file from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:931)
+[09:41:30|Info ] Downloading camera definition from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:1171)
+Getting option for exp-mode
 Resetting setting to initial option.
-Setting wb-mode to 1
+Setting exp-mode to 3
+CameraSettings test result: Success
+----
+[09:41:30|Debug] request camera info (camera_impl.cpp:142)
+[09:41:31|Warn ] sending again, retries to do: 3  (528). (mavlink_commands.cpp:222)
+[09:41:31|Debug] request camera info (camera_impl.cpp:142)
+[09:41:31|Warn ] sending again, retries to do: 2  (528). (mavlink_commands.cpp:222)
+[09:41:32|Warn ] sending again, retries to do: 1  (528). (mavlink_commands.cpp:222)
+[09:41:32|Error] Retrying failed (528) (mavlink_commands.cpp:239)
+[09:41:32|Debug] downloading camera definition file from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:931)
+[09:41:32|Info ] Downloading camera definition from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:1171)
+[09:41:33|Warn ] sending again, retries to do: 3  (528). (mavlink_commands.cpp:222)
+Checking if contrast is a possible setting.
+Getting option for contrast
+Getting range properties for contrast
+Setting contrast to 0
+Getting option for contrast
+Setting contrast to 255
+[09:41:33|Warn ] sending again, retries to do: 2  (528). (mavlink_commands.cpp:222)
+Getting option for contrast
+Setting contrast to 127
+Getting option for contrast
+Resetting setting to initial option.
+Setting contrast to 32
+CameraSettings test result: Success
+----
+[09:41:34|Debug] request camera info (camera_impl.cpp:142)
+[09:41:34|Warn ] sending again, retries to do: 1  (528). (mavlink_commands.cpp:222)
+[09:41:34|Debug] request camera info (camera_impl.cpp:142)
+[09:41:34|Error] Retrying failed (528) (mavlink_commands.cpp:239)
+[09:41:34|Debug] downloading camera definition file from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:931)
+[09:41:34|Info ] Downloading camera definition from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:1171)
+[09:41:35|Warn ] sending again, retries to do: 3  (528). (mavlink_commands.cpp:222)
+[09:41:36|Warn ] sending again, retries to do: 2  (528). (mavlink_commands.cpp:222)
+[09:41:36|Warn ] sending again, retries to do: 1  (528). (mavlink_commands.cpp:222)
+[09:41:37|Error] Retrying failed (528) (mavlink_commands.cpp:239)
+[09:41:37|Debug] downloading camera definition file from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:931)
+[09:41:37|Info ] Downloading camera definition from: http://127.0.0.1:8000/camera-def-uvc.xml (camera_impl.cpp:1171)
+Checking if brightness is a possible setting.
+Getting option for brightness
+Getting range properties for brightness
+Setting brightness to 0
+Getting option for brightness
+Setting brightness to 225
+Getting option for brightness
+Setting brightness to 112
+Getting option for brightness
+Resetting setting to initial option.
+Setting brightness to 128
 CameraSettings test result: Success
 ----
 Test summary:
@@ -169,10 +306,39 @@ CameraSettings:
 name: CameraSettings
 camera_id: 2
 param_name: wb-mode
-param_value: 0
-sub_param_name: wb-temp
-sub_param_values: 4000
-sub_param_value:
+param_is_range: false
+  => passed
+----
+CameraSettings:
+name: CameraSettings
+camera_id: 2
+param_name: exp-mode
+param_is_range: false
+  => passed
+----
+CameraSettings:
+name: CameraSettings
+camera_id: 2
+param_name: contrast
+param_is_range: true
+  => passed
+----
+CameraSettings:
+name: CameraSettings
+camera_id: 2
+param_name: brightness
+param_is_range: true
   => passed
 ----
 ```
+
+**Note:**
+
+In the test above some errors are logged but can be ignored because there is no autopilot connected:
+```
+[09:41:35|Warn ] sending again, retries to do: 3  (528). (mavlink_commands.cpp:222)
+[09:41:36|Warn ] sending again, retries to do: 2  (528). (mavlink_commands.cpp:222)
+[09:41:36|Warn ] sending again, retries to do: 1  (528). (mavlink_commands.cpp:222)
+[09:41:37|Error] Retrying failed (528) (mavlink_commands.cpp:239)
+```
+
