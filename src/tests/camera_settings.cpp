@@ -40,7 +40,7 @@ void CameraSettings::getPossibleSettingOptions()
         std::any_of(std::begin(settings), std::end(settings),
                     [this](const std::string& setting) { return (setting == _config.param_name); });
 
-    ASSERT_EQ(found_setting, true);
+    ASSERT_TRUE(found_setting);
 }
 
 void CameraSettings::getAndSetPossibleOptions()
@@ -83,8 +83,8 @@ void CameraSettings::setSomeRangeOptions()
     std::vector<Camera::Option> options;
     _camera.get_possible_options(_config.param_name, options);
 
-    ASSERT_EQ(options.size() >= 2, true);
-    ASSERT_EQ(options.size() <= 3, true);
+    ASSERT_TRUE(options.size() >= 2);
+    ASSERT_TRUE(options.size() <= 3);
 
     // FIXME: dealing with this interface is not great and needs improvement.
 
@@ -106,7 +106,7 @@ void CameraSettings::setSomeRangeOptions()
         EXPECT_EQ(set_option, new_option);
     }
 
-    EXPECT_EQ(maximum > minimum, true);
+    EXPECT_TRUE(maximum > minimum);
 
     if (options.size() == 2) {
         // We are only given min and max, no interval so any increment should work.
@@ -120,7 +120,7 @@ void CameraSettings::setSomeRangeOptions()
     } else {
         const auto& interval = std::atoi(options[2].option_id.c_str());
 
-        EXPECT_EQ((maximum - minimum) % interval == 0, true);
+        EXPECT_EQ((maximum - minimum) % interval, 0);
 
         // We use the interval to get something close to the center.
         const auto& center = ((maximum - minimum) / 2) / interval * interval;

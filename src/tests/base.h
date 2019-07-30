@@ -136,6 +136,10 @@ public:
 
 #define EXPECT_EQ(a_, b_) expectEq((a_), (b_), #a_, #b_, __FILE__, __LINE__)
 #define ASSERT_EQ(a_, b_) assertEq((a_), (b_), #a_, #b_, __FILE__, __LINE__)
+#define EXPECT_TRUE(a_) EXPECT_EQ((a_), true)
+#define ASSERT_TRUE(a_) ASSERT_EQ((a_), true)
+#define EXPECT_FALSE(a_) EXPECT_EQ((a_), false)
+#define ASSERT_FALSE(a_) ASSERT_EQ((a_), false)
 
 protected:
     /**
