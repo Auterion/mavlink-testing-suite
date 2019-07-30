@@ -31,6 +31,9 @@ shared_ptr<mavsdk::MissionItem> Mission::makeMissionItem(double latitude_deg, do
 
 void Mission::run()
 {
+    // FIXME: we need to let the mission plugin initialize first.
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+
     dropMessages(_config.message_loss);
     uploadDownloadCompare();
     eraseMission();
