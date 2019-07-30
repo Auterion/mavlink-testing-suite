@@ -88,7 +88,7 @@ void CameraSettings::setSomeRangeOptions()
 
     // FIXME: dealing with this interface is not great and needs improvement.
 
-    const auto& minimum = std::atoi(options[0].option_id.c_str());
+    const auto minimum = std::atoi(options[0].option_id.c_str());
     {
         Camera::Option new_option;
         new_option.option_id = std::to_string(minimum);
@@ -97,7 +97,7 @@ void CameraSettings::setSomeRangeOptions()
         EXPECT_EQ(set_option, new_option);
     }
 
-    const auto& maximum = std::atoi(options[1].option_id.c_str());
+    const auto maximum = std::atoi(options[1].option_id.c_str());
     {
         Camera::Option new_option;
         new_option.option_id = std::to_string(maximum);
@@ -110,7 +110,7 @@ void CameraSettings::setSomeRangeOptions()
 
     if (options.size() == 2) {
         // We are only given min and max, no interval so any increment should work.
-        const auto& center = (maximum - minimum) / 2 + minimum;
+        const auto center = (maximum - minimum) / 2 + minimum;
         Camera::Option new_option;
         new_option.option_id = std::to_string(center);
         setOption(_config.param_name, new_option);
@@ -118,12 +118,12 @@ void CameraSettings::setSomeRangeOptions()
         EXPECT_EQ(set_option.option_id, std::to_string(center));
 
     } else {
-        const auto& interval = std::atoi(options[2].option_id.c_str());
+        const auto interval = std::atoi(options[2].option_id.c_str());
 
         EXPECT_EQ((maximum - minimum) % interval, 0);
 
         // We use the interval to get something close to the center.
-        const auto& center = ((maximum - minimum) / 2) / interval * interval;
+        const auto center = ((maximum - minimum) / 2) / interval * interval;
         Camera::Option new_option;
         new_option.option_id = std::to_string(center);
         setOption(_config.param_name, new_option);
