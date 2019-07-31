@@ -31,6 +31,9 @@ shared_ptr<mavsdk::MissionItem> Mission::makeMissionItem(double latitude_deg, do
 
 void Mission::run()
 {
+    // FIXME: we need to let the mission plugin initialize first.
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+
     dropMessages(_config.message_loss);
     uploadDownloadCompare();
     eraseMission();
@@ -117,7 +120,8 @@ void Mission::compareMissions(const std::vector<std::shared_ptr<mavsdk::MissionI
         return;
     }
 
-    for (unsigned i = 0; i < items_a.size(); ++i) {
+    for (std::vector<std::shared_ptr<mavsdk::MissionItem>>::size_type i = 0; i < items_a.size();
+         ++i) {
         EXPECT_EQ(*(items_a[i]), *(items_b[i]));
     }
 }
@@ -126,13 +130,13 @@ void Mission::dropMessages(const float ratio)
 {
     _mavlink_passthrough.intercept_incoming_messages_async(
         [this, ratio](mavlink_message_t& message) {
-            UNUSED(message);
+            unused(message);
             return shouldDropMissionMessage(message, ratio);
         });
 
     _mavlink_passthrough.intercept_outgoing_messages_async(
         [this, ratio](mavlink_message_t& message) {
-            UNUSED(message);
+            unused(message);
             return shouldDropMissionMessage(message, ratio);
         });
 }
