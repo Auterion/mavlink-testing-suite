@@ -2,8 +2,7 @@
 
 [![Build Status](https://travis-ci.org/Auterion/mavlink-testing-suite.svg?branch=master)](https://travis-ci.org/Auterion/mavlink-testing-suite)
 
-This project aims to provide a testing suite to test standard compliance of MAVLink-enabled components/systems.
-The design intent is described in https://docs.google.com/document/d/1zwUZ-VUmq2pmCuGn1kY6BRS48-GiSXcMO5TUfnTpqmI
+This project aims to provide a testing suite to test standard compliance of MAVLink-enabled components/systems. The definition of MAVLink as standard consists of all the messages and only the messages of this message set: https://mavlink.io/en/messages/common.html
 
 - Build the testing suite:
   ```
@@ -11,28 +10,28 @@ The design intent is described in https://docs.google.com/document/d/1zwUZ-VUmq2
   ```
 ### Running the Autopilot Tests
 
-1. Start the SITL simulation:
+1. Start the SITL simulation (this is specific to the system-under-test, PX4 SITL is simply provided as an example):
     ```
     make px4_sitl jmavsim
     ```
 
-2. Then run the tests in the `build` directory with:
+2. Then run the tests in the `build` directory (this is the same for any tested system):
     ```
     (cd build && ./mavlink_testing_suite ../config/autopilot.yaml udp://)
     ```
 
 ### Running the Camera-Manager Tests
 
-1. Start the camera-manager:
+1. Start the camera-manager (this is specific to the system-under-test, DCM is simply provided as an example):
     ```
     ./dcm -c samples/config/ubuntu.conf -g debug
     ```
-2. Start the camera-manager http server to serve the camera definition file:
+2. Start the camera-manager http server to serve the camera definition file (this is specific to the system-under-test, DCM is simply provided as an example):
     ```
     python -m SimpleHTTPServer
     ```
 
-3. Then run the tests in the `build` directory with:
+3. Then run the tests in the `build` directory (this is the same for any tested system):
     ```
     (cd build && ./mavlink_testing_suite ../config/camera-manager.yaml udp://:14550)
     ```
