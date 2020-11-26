@@ -32,8 +32,9 @@ ExternalProject_Add(third_party_yaml
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/yaml-cpp
     CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+       -DYAML_CPP_BUILD_TESTS=OFF
     GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
-    GIT_TAG yaml-cpp-0.6.2
+    GIT_TAG yaml-cpp-0.6.3
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/build_yaml
     INSTALL_COMMAND ""
     )
