@@ -22,8 +22,8 @@ else()
 endif()
 string(TIMESTAMP SUITE_VERSION_BUILD_TIMESTAMP "%Y-%m-%dT%H:%M:%S.000000Z" UTC)
 
-# Specify at least C++11
-set(CMAKE_CXX_STANDARD 11)
+# Specify C++17
+set(CMAKE_CXX_STANDARD 17)
 
 # Enable strict handling of warnings
 if(MSVC)
