@@ -38,14 +38,14 @@ protected:
 private:
     void uploadDownloadCompare();
     void eraseMission();
-    std::shared_ptr<mavsdk::MissionItem> makeMissionItem(double latitude_deg, double longitude_deg,
-                                                         float relative_altitude_m);
+    mavsdk::Mission::MissionItem makeMissionItem(double latitude_deg, double longitude_deg,
+                                                 float relative_altitude_m);
 
-    std::vector<std::shared_ptr<mavsdk::MissionItem>> assembleMissionItems();
-    void uploadMission(const std::vector<std::shared_ptr<mavsdk::MissionItem>>& items);
-    std::vector<std::shared_ptr<mavsdk::MissionItem>> downloadMission();
-    void compareMissions(const std::vector<std::shared_ptr<mavsdk::MissionItem>>& items_a,
-                         const std::vector<std::shared_ptr<mavsdk::MissionItem>>& items_b);
+    mavsdk::Mission::MissionPlan assembleMissionPlan();
+    void uploadMission(const mavsdk::Mission::MissionPlan& plan);
+    const mavsdk::Mission::MissionPlan downloadMission();
+    void compareMissions(const mavsdk::Mission::MissionPlan& plan_a,
+                         const mavsdk::Mission::MissionPlan& plan_b);
 
     void dropMessages(float ratio);
     bool shouldDropMissionMessage(const mavlink_message_t& message, float ratio);

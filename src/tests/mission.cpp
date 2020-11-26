@@ -20,12 +20,13 @@ Mission::Mission(const Context& context)
 {
 }
 
-shared_ptr<mavsdk::MissionItem> Mission::makeMissionItem(double latitude_deg, double longitude_deg,
-                                                         float relative_altitude_m)
+mavsdk::Mission::MissionItem Mission::makeMissionItem(double latitude_deg, double longitude_deg,
+                                                      float relative_altitude_m)
 {
-    shared_ptr<mavsdk::MissionItem> new_item = make_shared<mavsdk::MissionItem>();
-    new_item->set_position(latitude_deg, longitude_deg);
-    new_item->set_relative_altitude(relative_altitude_m);
+    mavsdk::Mission::MissionItem new_item{};
+    new_item.latitude_deg = latitude_deg;
+    new_item.longitude_deg = longitude_deg;
+    new_item.relative_altitude_m = relative_altitude_m;
     return new_item;
 }
 
@@ -41,88 +42,74 @@ void Mission::run()
 
 void Mission::uploadDownloadCompare()
 {
-    std::vector<std::shared_ptr<mavsdk::MissionItem>> items = assembleMissionItems();
+    const auto plan = assembleMissionPlan();
 
-    uploadMission(items);
-    std::vector<std::shared_ptr<mavsdk::MissionItem>> downloaded_items = downloadMission();
+    uploadMission(plan);
+    const auto downloaded_plan = downloadMission();
 
-    compareMissions(items, downloaded_items);
+    compareMissions(plan, downloaded_plan);
 }
 
 void Mission::eraseMission()
 {
-    // TODO: presumably the Dronecode SDK should expose a function to do `MISSION_CLEAR_ALL`
-    //       instead of uploading an empty mission list.
-
-    // This doesn't seem to work for now.
-    // std::vector<std::shared_ptr<mavsdk::MissionItem>> no_items{};
-    // uploadMission(no_items);
+    cout << "Clearing mission..." << endl;
+    auto result = _mission.clear_mission();
+    ASSERT_EQ(result, mavsdk::Mission::Result::Success);
 }
 
-std::vector<std::shared_ptr<mavsdk::MissionItem>> Mission::assembleMissionItems()
+mavsdk::Mission::MissionPlan Mission::assembleMissionPlan()
 {
     cout << "Number of waypoints: " << _config.num_waypoints << endl;
 
-    std::vector<std::shared_ptr<mavsdk::MissionItem>> items{};
+    mavsdk::Mission::MissionPlan plan;
 
     for (int i = 0; i < _config.num_waypoints; ++i) {
         float altitude = 10.F + (float)i;
         double latitude = 47.398170327054473 + (double)i * 1e-5;
-        items.push_back(makeMissionItem(latitude, 8.5456490218639658, altitude));
+        plan.mission_items.push_back(makeMissionItem(latitude, 8.5456490218639658, altitude));
     }
 
-    return items;
+    return plan;
 }
 
-void Mission::uploadMission(const std::vector<std::shared_ptr<mavsdk::MissionItem>>& items)
+void Mission::uploadMission(const mavsdk::Mission::MissionPlan& plan)
 {
     cout << "Uploading mission..." << endl;
     promise<mavsdk::Mission::Result> prom{};
     auto fut = prom.get_future();
 
     _mission.upload_mission_async(
-        items, [&prom](mavsdk::Mission::Result result) { prom.set_value(result); });
+        plan, [&prom](mavsdk::Mission::Result result) { prom.set_value(result); });
 
     // wait until uploaded
     const mavsdk::Mission::Result result = fut.get();
-    ASSERT_EQ(result, mavsdk::Mission::Result::SUCCESS);
+    ASSERT_EQ(result, mavsdk::Mission::Result::Success);
 }
 
-std::vector<std::shared_ptr<mavsdk::MissionItem>> Mission::downloadMission()
+const mavsdk::Mission::MissionPlan Mission::downloadMission()
 {
     cout << "Downloading mission..." << endl;
-    promise<pair<mavsdk::Mission::Result, std::vector<std::shared_ptr<mavsdk::MissionItem>>>>
-        prom{};
-    auto fut = prom.get_future();
 
-    _mission.download_mission_async(
-        [&prom](mavsdk::Mission::Result result,
-                const std::vector<std::shared_ptr<mavsdk::MissionItem>>& items) {
-            prom.set_value(make_pair(result, items));
-        });
-
-    auto value = fut.get();
-    const mavsdk::Mission::Result& result = value.first;
-    const std::vector<std::shared_ptr<mavsdk::MissionItem>>& items = value.second;
+    auto result = _mission.download_mission();
 
     // wait until uploaded
-    ASSERT_EQ(result, mavsdk::Mission::Result::SUCCESS);
+    ASSERT_EQ(result.first, mavsdk::Mission::Result::Success);
 
-    return items;
+    return result.second;
 }
 
-void Mission::compareMissions(const std::vector<std::shared_ptr<mavsdk::MissionItem>>& items_a,
-                              const std::vector<std::shared_ptr<mavsdk::MissionItem>>& items_b)
+void Mission::compareMissions(const mavsdk::Mission::MissionPlan& plan_a,
+                              const mavsdk::Mission::MissionPlan& plan_b)
 {
-    EXPECT_EQ(items_a.size(), items_b.size());
+    EXPECT_EQ(plan_a.mission_items.size(), plan_b.mission_items.size());
 
-    if (items_a.size() != items_b.size()) {
+    if (plan_a.mission_items.size() != plan_b.mission_items.size()) {
         return;
     }
 
-    for (std::vector<std::shared_ptr<mavsdk::MissionItem>>::size_type i = 0; i < items_a.size();
+    for (std::size_t i = 0; i < plan_a.mission_items.size();
          ++i) {
-        EXPECT_EQ(*(items_a[i]), *(items_b[i]));
+        EXPECT_EQ(plan_a.mission_items[i], plan_b.mission_items[i]);
     }
 }
 

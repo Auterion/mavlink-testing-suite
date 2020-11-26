@@ -25,7 +25,7 @@ namespace tests
  * Data that is supplied to each test
  */
 struct Context {
-    mavsdk::System& system;
+    std::shared_ptr<mavsdk::System> system;
     // TODO: logging, ...
 };
 
