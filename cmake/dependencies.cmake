@@ -8,12 +8,12 @@ if(MAVSDK_INSTALL_DIR)
 else()
     # clone and build MAVSDK via ExternalProject
     ExternalProject_Add(third_party_mavsdk
-        SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/MAVSDK
+        SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/third_party/MAVSDK"
         CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk/install
-            -DENABLE_MAVLINK_PASSTHROUGH=1
-            GIT_REPOSITORY https://github.com/mavlink/MAVSDK.git
-            GIT_TAG 730a0ef51d248a4c3f39fdb011ed07d28a7c37aa
+           -DBUILD_TESTS=OFF
+        GIT_REPOSITORY https://github.com/mavlink/MAVSDK.git
+        GIT_TAG 5a6d5e3a04c526db49500902190b29b46a786d85
         BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk
         INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
         )
