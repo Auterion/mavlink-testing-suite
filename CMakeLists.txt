@@ -49,9 +49,9 @@ add_dependencies(mavlink_testing_suite
 
 if(MSVC)
     if (CMAKE_BUILD_TYPE STREQUAL "Release")
-        set (YAML_LIB yaml-cppmd)
+        set (YAML_LIB libyaml-cppmd.lib)
     else()
-        set (YAML_LIB yaml-cppmdd)
+        set (YAML_LIB libyaml-cppmdd.lib)
     endif()
 else()
     set (YAML_LIB yaml-cpp)

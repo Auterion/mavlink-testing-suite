@@ -4,10 +4,17 @@
 
 This project aims to provide a testing suite to test standard compliance of MAVLink-enabled components/systems. The definition of MAVLink as standard consists of all the messages and only the messages of this message set: https://mavlink.io/en/messages/common.html
 
-- Build the testing suite:
-  ```
-  (mkdir -p build && cd build && cmake .. && make)
-  ```
+Build the testing suite, on Linux/macOS:
+```
+  cmake -Bbuild -S.
+  cmake --build build -j8.
+```
+Or on Windows:
+```
+cmake -G "Visual Studio 16 2019" -Bbuild -S.
+cmake --build build -j8
+```
+
 ### Running the Autopilot Tests
 
 1. Start the SITL simulation (this is specific to the system-under-test, PX4 SITL is simply provided as an example):
@@ -17,7 +24,7 @@ This project aims to provide a testing suite to test standard compliance of MAVL
 
 2. Then run the tests in the `build` directory (this is the same for any tested system):
     ```
-    (cd build && ./mavlink_testing_suite ../config/autopilot.yaml udp://)
+    build/mavlink_testing_suite config/autopilot.yaml udp://
     ```
 
 ### Running the Camera-Manager Tests
@@ -33,7 +40,7 @@ This project aims to provide a testing suite to test standard compliance of MAVL
 
 3. Then run the tests in the `build` directory (this is the same for any tested system):
     ```
-    (cd build && ./mavlink_testing_suite ../config/camera-manager.yaml udp://:14550)
+    build/mavlink_testing_suite ../config/camera-manager.yaml udp://:14550
     ```
 
 **Note:**
@@ -43,7 +50,8 @@ The `camera_id` in [camera-manager.yaml](config/camera-manager.yaml) might need 
 
 Before committing, make sure to run the code formatting and tidying using clang.
 ```
-(cd build && make format; make clang_tidy)
+cmake --build build --target clang_tidy
+cmake --build build --target clang_format
 ```
 
 ## Use custom MAVSDK build
@@ -51,12 +59,7 @@ Before committing, make sure to run the code formatting and tidying using clang.
 For debugging purposes it can be handy to use a custom version of MAVSDK:
 
 ```
-cd <wherever>/MAVSDK
-make clean
-export DRONECODE_SDK_INSTALL_DIR=$(pwd)/install
-make ENABLE_MAVLINK_PASSTHROUGH=1 INSTALL_PREFIX=$MAVSDK_INSTALL_DIR default install
-cd <wherever>/mavlink-testing-suite
-(mkdir -p build && cd build && cmake -DDRONECODE_SDK_INSTALL_DIR=$MAVSDK_INSTALL_DIR .. && make)
+cmake -Bbuild -DMAVSDK_INSTALL_DIR=path/to/MAVSDK/install -S. && cmake --build build -j8)
 ```
 
 ### Sample Output of the Autopilot Tests
@@ -340,4 +343,3 @@ In the test above some errors are logged but can be ignored because there is no 
 [09:41:36|Warn ] sending again, retries to do: 1  (528). (mavlink_commands.cpp:222)
 [09:41:37|Error] Retrying failed (528) (mavlink_commands.cpp:239)
 ```
-
