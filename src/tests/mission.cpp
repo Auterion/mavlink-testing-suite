@@ -1,5 +1,6 @@
 
 #include "mission.h"
+
 #include <future>
 #include <iostream>
 #include <memory>
@@ -107,8 +108,7 @@ void Mission::compareMissions(const mavsdk::Mission::MissionPlan& plan_a,
         return;
     }
 
-    for (std::size_t i = 0; i < plan_a.mission_items.size();
-         ++i) {
+    for (std::size_t i = 0; i < plan_a.mission_items.size(); ++i) {
         EXPECT_EQ(plan_a.mission_items[i], plan_b.mission_items[i]);
     }
 }

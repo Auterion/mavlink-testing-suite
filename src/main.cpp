@@ -1,4 +1,6 @@
 
+#include <mavsdk/mavsdk.h>
+
 #include <algorithm>
 #include <chrono>
 #include <cstdint>
@@ -7,8 +9,6 @@
 #include <iostream>
 #include <thread>
 #include <vector>
-
-#include <mavsdk/mavsdk.h>
 
 #include "tests/base.h"
 
@@ -38,8 +38,7 @@ int main(int argc, char** argv)
     connection_result = mavsdk.add_any_connection(connection_url);
 
     if (connection_result != ConnectionResult::Success) {
-        std::cout << error_console_text
-                  << "Connection failed: " << connection_result
+        std::cout << error_console_text << "Connection failed: " << connection_result
                   << normal_console_text << std::endl;
         return 1;
     }

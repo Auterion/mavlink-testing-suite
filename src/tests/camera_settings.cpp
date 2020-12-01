@@ -1,5 +1,6 @@
 
 #include "camera_settings.h"
+
 #include <algorithm>
 #include <chrono>
 #include <future>
@@ -36,9 +37,10 @@ mavsdk::Camera::SettingOptions CameraSettings::getPossibleSettingOptions()
     std::cout << "Checking if " << _config.param_name << " is a possible setting." << std::endl;
     auto setting_options = _camera.possible_setting_options();
 
-    const auto found =
-        std::find_if(std::begin(setting_options), std::end(setting_options),
-                    [this](const Camera::SettingOptions& setting_options) { return (setting_options.setting_id == _config.param_name); });
+    const auto found = std::find_if(std::begin(setting_options), std::end(setting_options),
+                                    [this](const Camera::SettingOptions& setting_options) {
+                                        return (setting_options.setting_id == _config.param_name);
+                                    });
 
     ASSERT_TRUE(found != setting_options.end());
 

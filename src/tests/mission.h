@@ -1,11 +1,11 @@
 #pragma once
 
-#include "base.h"
-#include "lossy_link.h"
-
 #include <mavsdk/mavsdk.h>
 #include <mavsdk/plugins/mavlink_passthrough/mavlink_passthrough.h>
 #include <mavsdk/plugins/mission/mission.h>
+
+#include "base.h"
+#include "lossy_link.h"
 
 namespace tests
 {

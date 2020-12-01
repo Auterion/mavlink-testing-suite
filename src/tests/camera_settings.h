@@ -1,9 +1,9 @@
 #pragma once
 
-#include "base.h"
-
 #include <mavsdk/mavsdk.h>
 #include <mavsdk/plugins/camera/camera.h>
+
+#include "base.h"
 
 namespace tests
 {
