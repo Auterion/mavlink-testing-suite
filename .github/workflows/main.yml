@@ -22,3 +22,13 @@ jobs:
       run: cmake --build build -j 2
     - name: Run clang-format
       run: cmake --build build --target format
+
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure
+        run: cmake -G "Visual Studio 16 2019" -j 2 -Bbuild -S.
+      - name: Build
+        run: cmake --build build -j 2 --config Debug
