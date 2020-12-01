@@ -75,7 +75,7 @@ int main(int argc, char** argv)
     std::vector<bool> fails(tests_node.size(), false);
 
     // Run the test(s)
-    tests::Context context{.system = system};
+    tests::Context context{system};
     unsigned i = 0;
     for (auto test_node : tests_node) {
         std::string test_name = test_node["name"].as<std::string>();
