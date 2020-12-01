@@ -2,7 +2,6 @@
 
 #include <mavsdk/mavsdk.h>
 #include <yaml-cpp/yaml.h>
-#include "streamable.h"
 
 #include <exception>
 #include <iostream>
@@ -11,6 +10,8 @@
 #include <string>
 #include <type_traits>
 #include <utility>
+
+#include "streamable.h"
 
 template <typename T>
 inline void unused(T t)
@@ -25,7 +26,7 @@ namespace tests
  * Data that is supplied to each test
  */
 struct Context {
-    mavsdk::System& system;
+    std::shared_ptr<mavsdk::System> system;
     // TODO: logging, ...
 };
 

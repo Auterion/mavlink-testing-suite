@@ -1,4 +1,6 @@
 
+#include <mavsdk/mavsdk.h>
+
 #include <algorithm>
 #include <chrono>
 #include <cstdint>
@@ -7,8 +9,6 @@
 #include <iostream>
 #include <thread>
 #include <vector>
-
-#include <mavsdk/mavsdk.h>
 
 #include "tests/base.h"
 
@@ -37,9 +37,8 @@ int main(int argc, char** argv)
     // For Serial : serial:///path/to/serial/dev[:baudrate]
     connection_result = mavsdk.add_any_connection(connection_url);
 
-    if (connection_result != ConnectionResult::SUCCESS) {
-        std::cout << error_console_text
-                  << "Connection failed: " << connection_result_str(connection_result)
+    if (connection_result != ConnectionResult::Success) {
+        std::cout << error_console_text << "Connection failed: " << connection_result
                   << normal_console_text << std::endl;
         return 1;
     }
@@ -48,20 +47,20 @@ int main(int argc, char** argv)
     auto prom = std::make_shared<std::promise<void>>();
     std::future<void> fut = prom->get_future();
 
-    System& system = mavsdk.system();
-    system.register_component_discovered_callback([prom, &system](ComponentType component_type) {
-        std::cout << normal_console_text << "Discovered a component with type "
-                  << unsigned(component_type) << std::endl;
+    mavsdk.subscribe_on_new_system([prom, &mavsdk]() {
+        std::cout << normal_console_text << "Discovered a system\n";
         try {
-            prom->set_value();
             // We only need to receive this once, now we can unsubscribe again.
-            system.register_component_discovered_callback(nullptr);
+            mavsdk.subscribe_on_new_system(nullptr);
+            prom->set_value();
         } catch (const std::future_error& e) {
             // Ignore if prom is set multiple times which can happen even though we're
             // unsubscribing straightaway if the callback triggers two times in quick
             // succession.
         }
     });
+
+    auto system = mavsdk.systems()[0];
 
     if (fut.wait_for(std::chrono::seconds(2)) == std::future_status::timeout) {
         std::cout << error_console_text << "No MAVLink component found" << normal_console_text
@@ -76,7 +75,7 @@ int main(int argc, char** argv)
     std::vector<bool> fails(tests_node.size(), false);
 
     // Run the test(s)
-    tests::Context context{.system = system};
+    tests::Context context{system};
     unsigned i = 0;
     for (auto test_node : tests_node) {
         std::string test_name = test_node["name"].as<std::string>();

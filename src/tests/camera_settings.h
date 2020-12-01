@@ -1,9 +1,9 @@
 #pragma once
 
-#include "base.h"
-
 #include <mavsdk/mavsdk.h>
 #include <mavsdk/plugins/camera/camera.h>
+
+#include "base.h"
 
 namespace tests
 {
@@ -37,10 +37,10 @@ protected:
 
 private:
     void selectCamera();
-    void getPossibleSettingOptions();
-    void getAndSetPossibleOptions();
-    void setAllEnumOptions();
-    void setSomeRangeOptions();
+    mavsdk::Camera::SettingOptions getPossibleSettingOptions();
+    void getAndSetPossibleOptions(const mavsdk::Camera::SettingOptions& setting_options);
+    void setAllEnumOptions(const mavsdk::Camera::SettingOptions& setting_options);
+    void setSomeRangeOptions(const mavsdk::Camera::SettingOptions& setting_options);
 
     mavsdk::Camera::Option getOption(const std::string& setting_id);
     void setOption(const std::string& setting_id, const mavsdk::Camera::Option& option);

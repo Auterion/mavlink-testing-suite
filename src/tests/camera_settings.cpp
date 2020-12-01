@@ -1,5 +1,6 @@
 
 #include "camera_settings.h"
+
 #include <algorithm>
 #include <chrono>
 #include <future>
@@ -19,56 +20,57 @@ CameraSettings::CameraSettings(const Context& context) : TestBase(context), _cam
 void CameraSettings::run()
 {
     selectCamera();
-    getPossibleSettingOptions();
-    getAndSetPossibleOptions();
+    const auto setting_options = getPossibleSettingOptions();
+    getAndSetPossibleOptions(setting_options);
 }
 
 void CameraSettings::selectCamera()
 {
-    _camera.select_camera(_config.camera_id);
+    // FIXME: looks like this interface is gone.
+    //_camera.select_camera(_config.camera_id);
     // FIXME: we need to let the camera plugin initialize after this.
     std::this_thread::sleep_for(std::chrono::seconds(3));
 }
 
-void CameraSettings::getPossibleSettingOptions()
+mavsdk::Camera::SettingOptions CameraSettings::getPossibleSettingOptions()
 {
     std::cout << "Checking if " << _config.param_name << " is a possible setting." << std::endl;
-    std::vector<std::string> settings;
-    _camera.get_possible_setting_options(settings);
+    auto setting_options = _camera.possible_setting_options();
 
-    const bool found_setting =
-        std::any_of(std::begin(settings), std::end(settings),
-                    [this](const std::string& setting) { return (setting == _config.param_name); });
+    const auto found = std::find_if(std::begin(setting_options), std::end(setting_options),
+                                    [this](const Camera::SettingOptions& setting_options) {
+                                        return (setting_options.setting_id == _config.param_name);
+                                    });
 
-    ASSERT_TRUE(found_setting);
+    ASSERT_TRUE(found != setting_options.end());
+
+    return *found;
 }
 
-void CameraSettings::getAndSetPossibleOptions()
+void CameraSettings::getAndSetPossibleOptions(const mavsdk::Camera::SettingOptions& setting_options)
 {
-    Camera::Option initial_option = getOption(_config.param_name);
+    mavsdk::Camera::Setting setting;
+    setting.setting_id = _config.param_name;
 
-    bool is_range = _camera.is_setting_range(_config.param_name);
-    ASSERT_EQ(_config.param_is_range, is_range);
+    const auto initial_settings = _camera.get_setting(setting);
 
-    if (is_range) {
-        setSomeRangeOptions();
+    ASSERT_EQ(initial_settings.first, mavsdk::Camera::Result::Success);
+
+    ASSERT_EQ(_config.param_is_range, initial_settings.second.is_range);
+
+    if (initial_settings.second.is_range) {
+        setSomeRangeOptions(setting_options);
     } else {
-        setAllEnumOptions();
+        setAllEnumOptions(setting_options);
     }
 
     std::cout << "Resetting setting to initial option." << std::endl;
-    setOption(_config.param_name, initial_option);
+    setOption(_config.param_name, initial_settings.second.option);
 }
 
-void CameraSettings::setAllEnumOptions()
+void CameraSettings::setAllEnumOptions(const mavsdk::Camera::SettingOptions& setting_options)
 {
-    Camera::Option initial_option = getOption(_config.param_name);
-
-    std::cout << "Getting possible settings for " << _config.param_name << std::endl;
-    std::vector<Camera::Option> options;
-    _camera.get_possible_options(_config.param_name, options);
-
-    for (const auto& option : options) {
+    for (const auto& option : setting_options.options) {
         std::cout << "- " << option.option_description << " (" << option.option_id << ")"
                   << std::endl;
         setOption(_config.param_name, option);
@@ -77,18 +79,14 @@ void CameraSettings::setAllEnumOptions()
     }
 }
 
-void CameraSettings::setSomeRangeOptions()
+void CameraSettings::setSomeRangeOptions(const mavsdk::Camera::SettingOptions& setting_options)
 {
-    std::cout << "Getting range properties for " << _config.param_name << std::endl;
-    std::vector<Camera::Option> options;
-    _camera.get_possible_options(_config.param_name, options);
-
-    ASSERT_TRUE(options.size() >= 2);
-    ASSERT_TRUE(options.size() <= 3);
+    ASSERT_TRUE(setting_options.options.size() >= 2);
+    ASSERT_TRUE(setting_options.options.size() <= 3);
 
     // FIXME: dealing with this interface is not great and needs improvement.
 
-    const auto minimum = std::atoi(options[0].option_id.c_str());
+    const auto minimum = std::atoi(setting_options.options[0].option_id.c_str());
     {
         Camera::Option new_option;
         new_option.option_id = std::to_string(minimum);
@@ -97,7 +95,7 @@ void CameraSettings::setSomeRangeOptions()
         EXPECT_EQ(set_option, new_option);
     }
 
-    const auto maximum = std::atoi(options[1].option_id.c_str());
+    const auto maximum = std::atoi(setting_options.options[1].option_id.c_str());
     {
         Camera::Option new_option;
         new_option.option_id = std::to_string(maximum);
@@ -108,7 +106,7 @@ void CameraSettings::setSomeRangeOptions()
 
     EXPECT_TRUE(maximum > minimum);
 
-    if (options.size() == 2) {
+    if (setting_options.options.size() == 2) {
         // We are only given min and max, no interval so any increment should work.
         const auto center = (maximum - minimum) / 2 + minimum;
         Camera::Option new_option;
@@ -118,7 +116,7 @@ void CameraSettings::setSomeRangeOptions()
         EXPECT_EQ(set_option.option_id, std::to_string(center));
 
     } else {
-        const auto interval = std::atoi(options[2].option_id.c_str());
+        const auto interval = std::atoi(setting_options.options[2].option_id.c_str());
 
         EXPECT_EQ((maximum - minimum) % interval, 0);
 
@@ -135,23 +133,22 @@ void CameraSettings::setSomeRangeOptions()
 Camera::Option CameraSettings::getOption(const std::string& setting_id)
 {
     std::cout << "Getting option for " << setting_id << std::endl;
-    Camera::Option option;
-    ASSERT_EQ(_camera.get_option(setting_id, option), Camera::Result::SUCCESS);
-    return option;
+
+    Camera::Setting setting;
+    setting.setting_id = setting_id;
+    const auto result = _camera.get_setting(setting);
+    ASSERT_EQ(result.first, Camera::Result::Success);
+    return result.second.option;
 }
 
 void CameraSettings::setOption(const std::string& setting_id, const Camera::Option& option)
 {
     std::cout << "Setting " << setting_id << " to " << option.option_id << std::endl;
-    std::promise<Camera::Result> prom;
-    std::future<Camera::Result> fut = prom.get_future();
-    _camera.set_option_async([&prom](Camera::Result set_result) { prom.set_value(set_result); },
-                             setting_id, option);
-    auto fut_ret = fut.wait_for(std::chrono::seconds(2));
-    EXPECT_EQ(fut_ret, std::future_status::ready);
-    if (fut_ret == std::future_status::ready) {
-        EXPECT_EQ(fut.get(), Camera::Result::SUCCESS);
-    }
+    Camera::Setting setting;
+    setting.setting_id = setting_id;
+    setting.option = option;
+    auto result = _camera.set_setting(setting);
+    EXPECT_EQ(result, Camera::Result::Success);
 }
 
 }  // namespace tests
