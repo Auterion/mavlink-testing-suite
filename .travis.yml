@@ -1,5 +1,0 @@
-language: cpp
-before_install:
-install:
-script: ./run_ci.sh
-
