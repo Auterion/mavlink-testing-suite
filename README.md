@@ -1,6 +1,6 @@
 ## MAVLink Standard Testing Suite
 
-[![GitHub Actions Status](https://github.com/mavlink/MAVSDK/workflows/Build/badge.svg?branch=master)](https://github.com/mavlink/MAVSDK/actions?query=branch%3Amaster)
+[![GitHub Actions Status](https://github.com/mavlink/MAVSDK/workflows/Build/badge.svg?branch=main)](https://github.com/mavlink/MAVSDK/actions?query=branch%3Amain)
 
 This project aims to provide a testing suite to test standard compliance of MAVLink-enabled components/systems. The definition of MAVLink as standard consists of all the messages and only the messages of this message set: https://mavlink.io/en/messages/common.html
 
