@@ -11,7 +11,7 @@ else()
         SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/third_party/MAVSDK"
         CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk/install
-           -DBUILD_TESTS=OFF
+            -DBUILD_TESTS=OFF
         GIT_REPOSITORY https://github.com/mavlink/MAVSDK.git
         GIT_TAG 5a6d5e3a04c526db49500902190b29b46a786d85
         BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk
@@ -31,12 +31,15 @@ endif()
 ExternalProject_Add(third_party_yaml
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/yaml-cpp
     CMAKE_ARGS
-        -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
-       -DYAML_CPP_BUILD_TESTS=OFF
+        -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/build_yaml/install
+        -DYAML_CPP_BUILD_TESTS=OFF
     GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
     GIT_TAG yaml-cpp-0.6.3
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/build_yaml
-    INSTALL_COMMAND ""
+    INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
     )
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/third_party/yaml-cpp/include)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/build_yaml/install/include)
+# Whichever path works :)
+link_directories(${CMAKE_CURRENT_BINARY_DIR}/build_yaml/install/lib)
+link_directories(${CMAKE_CURRENT_BINARY_DIR}/build_yaml/install/lib64)
 list(APPEND dependencies third_party_yaml)
