@@ -1,19 +1,20 @@
 include(ExternalProject)
 
-
 if(MAVSDK_INSTALL_DIR)
     message(STATUS "Using MAVSDK from: ${MAVSDK_INSTALL_DIR}")
     include_directories(${MAVSDK_INSTALL_DIR}/include)
     link_directories(${MAVSDK_INSTALL_DIR}/lib)
 else()
     # clone and build MAVSDK via ExternalProject
+    set(MAVSDK_TAG b915a84f61570f338c5ccf979fc7890560a2d512)
+    message(STATUS "Building MAVSDK tag ${MAVSDK_TAG}")
     ExternalProject_Add(third_party_mavsdk
         SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/third_party/MAVSDK"
         CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk/install
             -DBUILD_TESTS=OFF
-        GIT_REPOSITORY https://github.com/mavlink/MAVSDK.git
-        GIT_TAG 5a6d5e3a04c526db49500902190b29b46a786d85
+        GIT_REPOSITORY git@github.com:Auterion/MAVSDK.git
+        GIT_TAG ${MAVSDK_TAG}
         BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk
         INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
         )
