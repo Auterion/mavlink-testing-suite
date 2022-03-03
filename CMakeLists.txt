@@ -34,18 +34,25 @@ endif()
 
 include(cmake/dependencies.cmake)
 
+
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+
+enable_testing()
 add_executable(mavlink_testing_suite
     src/main.cpp
-
-    src/tests/base.cpp
-    src/tests/mission.cpp
-    src/tests/param_change.cpp
-    src/tests/camera_settings.cpp
-    src/tests/lossy_link.cpp
+    src/tests/test.cpp
 )
 add_dependencies(mavlink_testing_suite
     ${dependencies}
-    )
+)
 
 if(MSVC)
     if (CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -65,7 +72,13 @@ target_link_libraries(mavlink_testing_suite
     mavsdk_camera
     mavsdk_mavlink_passthrough
     ${YAML_LIB}
+    gtest_main
 )
+
+include(GoogleTest)
+gtest_add_tests(mavlink_testing_suite SOURCES 
+    src/tests/test.cpp)
+
 
 find_program(CLANG_FORMAT_EXECUTABLE
     NAMES clang-format clang-format-5.0
