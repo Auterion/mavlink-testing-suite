@@ -1,16 +1,35 @@
 #pragma once
 #include <memory>
 #include <mavsdk/mavsdk.h>
+#include <mavsdk/plugins/mavlink_passthrough/mavlink_passthrough.h>
+#include <mavsdk/plugins/telemetry/telemetry.h>
 #include "gtest/gtest.h"
 #include <chrono>
 #include <future>
+#include "passthrough_tester.hpp"
 
+
+template<typename T>
+T floatAs(float f) {
+    union U {
+        float f;
+        T o;
+    };
+    U u;
+    u.f = f;
+    return u.o;
+}
 
 class Environment : public ::testing::Environment {
 private:
     inline static Environment* _instance;
 
     const std::string _connection_url;
+    mavsdk::Mavsdk _mavsdk;
+    std::shared_ptr<mavsdk::System> _system;
+    std::shared_ptr<mavsdk::MavlinkPassthrough> _mavlinkPassthrough;
+    std::shared_ptr<mavsdk::Telemetry> _telemetry;
+    std::shared_ptr<PassthroughTester> _tester;
 
     static std::shared_ptr<mavsdk::System> getSystem(mavsdk::Mavsdk& mavsdk)
     {
@@ -64,18 +83,36 @@ public:
     }
 
     void SetUp() override {
-        mavsdk::Mavsdk mavsdk;
-        mavsdk::ConnectionResult connection_result = mavsdk.add_any_connection(_connection_url);
+        mavsdk::ConnectionResult connection_result = _mavsdk.add_any_connection(_connection_url);
 
         if (connection_result != mavsdk::ConnectionResult::Success) {
             std::cerr << "Connection failed: " << connection_result << '\n';
             throw std::runtime_error("Connection failed");
         }
 
-        auto system = getSystem(mavsdk);
-        if (!system) {
+        _system = getSystem(_mavsdk);
+        if (!_system) {
             throw std::runtime_error("No system found");
         }
+        _mavlinkPassthrough = std::make_shared<mavsdk::MavlinkPassthrough>(_system);
+        _telemetry = std::make_shared<mavsdk::Telemetry>(_system);
+        _tester = std::make_shared<PassthroughTester>(_mavlinkPassthrough);
+    }
+
+    std::shared_ptr<mavsdk::System> getSystem() const {
+        return _system;
+    }
+
+    std::shared_ptr<mavsdk::MavlinkPassthrough> getPassthrough() const {
+        return _mavlinkPassthrough;
+    }
+
+    std::shared_ptr<mavsdk::Telemetry> getTelemetry() const {
+        return _telemetry;
+    }
+
+    std::shared_ptr<PassthroughTester> getPassthroughTester() const {
+        return _tester;
     }
 
     void TearDown() override {

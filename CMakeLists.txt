@@ -44,11 +44,14 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+set(TEST_SOURCES
+    src/tests/test.cpp
+    src/tests/param.cpp)
 
 enable_testing()
 add_executable(mavlink_testing_suite
     src/main.cpp
-    src/tests/test.cpp
+    ${TEST_SOURCES}
 )
 add_dependencies(mavlink_testing_suite
     ${dependencies}
@@ -66,18 +69,19 @@ endif()
 
 target_link_libraries(mavlink_testing_suite
     mavsdk
-    mavsdk_action
-    mavsdk_mission
-    mavsdk_param
-    mavsdk_camera
-    mavsdk_mavlink_passthrough
+    # mavsdk_action
+    # mavsdk_mission
+    # mavsdk_param
+    # mavsdk_camera
+    # mavsdk_mavlink_passthrough
     ${YAML_LIB}
     gtest_main
 )
 
 include(GoogleTest)
 gtest_add_tests(mavlink_testing_suite SOURCES 
-    src/tests/test.cpp)
+    ${TEST_SOURCES}
+)
 
 
 find_program(CLANG_FORMAT_EXECUTABLE
