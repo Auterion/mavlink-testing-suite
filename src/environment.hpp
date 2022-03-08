@@ -3,21 +3,33 @@
 #include <mavsdk/mavsdk.h>
 #include <mavsdk/plugins/mavlink_passthrough/mavlink_passthrough.h>
 #include <mavsdk/plugins/telemetry/telemetry.h>
+#include <yaml-cpp/yaml.h>
 #include "gtest/gtest.h"
 #include <chrono>
 #include <future>
 #include "passthrough_tester.hpp"
 
+namespace MavlinkTestingSuite {
 
-template<typename T>
-T floatAs(float f) {
+template<typename A, typename B>
+A _packUnpack(B b) {
     union U {
-        float f;
-        T o;
+        A a;
+        B b;
     };
     U u;
-    u.f = f;
-    return u.o;
+    u.b = b;
+    return u.a;
+}
+
+template<typename T>
+T floatUnpack(float f) {
+    return _packUnpack<T, float>(f);
+}
+
+template<typename T>
+float floatPack(T o) {
+    return _packUnpack<float, T>(o);
 }
 
 class Environment : public ::testing::Environment {
@@ -25,7 +37,8 @@ private:
     inline static Environment* _instance;
 
     const std::string _connection_url;
-    mavsdk::Mavsdk _mavsdk;
+    const YAML::Node _config;
+    std::shared_ptr<mavsdk::Mavsdk> _mavsdk;
     std::shared_ptr<mavsdk::System> _system;
     std::shared_ptr<mavsdk::MavlinkPassthrough> _mavlinkPassthrough;
     std::shared_ptr<mavsdk::Telemetry> _telemetry;
@@ -62,12 +75,11 @@ private:
         return fut.get();
     }
 
-    Environment(const std::string &connection_url) : _connection_url(connection_url) {
+    Environment(const std::string &connection_url, const std::string &yaml_path) : 
+    _connection_url(connection_url), _config(YAML::LoadFile(yaml_path)) {
     }
 
 public:
-
-
     static bool isCreated() {
         return _instance != nullptr;
     }
@@ -76,21 +88,21 @@ public:
         return _instance;
     }
 
-    static void create(const std::string &connection_url) {
+    static void create(const std::string &connection_url, const std::string &yaml_path) {
         if (!isCreated()) {
-            _instance = new Environment(connection_url);
+            _instance = new Environment(connection_url, yaml_path);
         }
     }
 
     void SetUp() override {
-        mavsdk::ConnectionResult connection_result = _mavsdk.add_any_connection(_connection_url);
+        _mavsdk = std::make_shared<mavsdk::Mavsdk>();
+        mavsdk::ConnectionResult connection_result = _mavsdk->add_any_connection(_connection_url);
 
         if (connection_result != mavsdk::ConnectionResult::Success) {
             std::cerr << "Connection failed: " << connection_result << '\n';
             throw std::runtime_error("Connection failed");
         }
-
-        _system = getSystem(_mavsdk);
+        _system = getSystem(*_mavsdk);
         if (!_system) {
             throw std::runtime_error("No system found");
         }
@@ -115,10 +127,20 @@ public:
         return _tester;
     }
 
+    const YAML::Node& getConfig() const {
+        return _config;
+    }
+
     void TearDown() override {
+        _tester = nullptr;
+        _mavlinkPassthrough = nullptr;
+        _telemetry = nullptr;
+        _system = nullptr;
+        _mavsdk = nullptr;
     }
 
     ~Environment() override {
     }
 };
 
+};

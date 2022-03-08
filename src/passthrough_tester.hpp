@@ -3,18 +3,35 @@
 #include <mavsdk/plugins/mavlink_passthrough/mavlink_passthrough.h>
 #include <map>
 #include <list>
+#include <mutex>
 
 #include <utility>
 #include "passthrough_messages.hpp"
 
+namespace MavlinkTestingSuite {
+
+class TimeoutError : public std::runtime_error {
+public:
+    TimeoutError(const std::string &msg) : std::runtime_error(msg) {}
+};
+
 class PassthroughTester {
 private:
     std::shared_ptr<mavsdk::MavlinkPassthrough> _passthrough;
-    std::map<uint32_t, std::list<std::shared_ptr<std::promise<mavlink_message_t>>>> _callbackMap;
+    std::map<uint32_t, std::list<std::shared_ptr<std::promise<mavlink_message_t>>>> _promise_map;
+    std::map<uint32_t, std::list<mavlink_message_t>> _message_queue_map;
+    std::mutex _map_mutex;
 
     void passthroughIntercept(mavlink_message_t &message) {
-        for (auto &prom : _callbackMap[message.msgid]) {
-            prom->set_value(message);
+        std::unique_lock lock(_map_mutex);
+
+        if ((_promise_map[message.msgid]).empty()) {
+            (_message_queue_map[message.msgid]).push_back(message);
+        } else {
+            for (auto &prom : _promise_map[message.msgid]) {
+                prom->set_value(message);
+            }
+            (_promise_map[message.msgid]).clear();
         }
     }
 
@@ -35,22 +52,39 @@ public:
     }
 
     template<int MSG>
-    typename msg_helper<MSG>::decode_type receive() {
-        auto prom = std::make_shared<std::promise<mavlink_message_t>>();
-        auto fut = prom->get_future();
+    typename msg_helper<MSG>::decode_type receive(uint32_t timeout_us) {
+        mavlink_message_t msg;
+        {
+            std::unique_lock lock(_map_mutex);
 
-        (_callbackMap[msg_helper<MSG>::ID]).push_back(prom);
-
-        if (fut.wait_for(std::chrono::seconds(3)) == std::future_status::timeout) {
-            std::cerr << "Timed out\n";
-            throw std::runtime_error("Timeout");
+            if ((_message_queue_map[msg_helper<MSG>::ID]).empty()) {
+                auto prom = std::make_shared<std::promise<mavlink_message_t>>();
+                auto fut = prom->get_future();
+                (_promise_map[msg_helper<MSG>::ID]).push_back(prom);
+                lock.unlock();
+                if (fut.wait_for(std::chrono::milliseconds(timeout_us)) == std::future_status::timeout) {
+                    throw TimeoutError("Message receive timeout");
+                }
+                msg = fut.get();
+            } else {
+                msg = (_message_queue_map[msg_helper<MSG>::ID]).front();
+                (_message_queue_map[msg_helper<MSG>::ID]).pop_front();
+            }
         }
-        _callbackMap[msg_helper<MSG>::ID].remove(prom);
 
-        typename msg_helper<MSG>::decode_type decoded_data;
-        mavlink_message_t msg = fut.get();
+        typename msg_helper<MSG>::decode_type decoded_data;        
         msg_helper<MSG>::unpack(&msg, &decoded_data);
         return decoded_data;
     }
 
+    template<int MSG>
+    typename msg_helper<MSG>::decode_type receive() {
+        return receive<MSG>(100);
+    }
+
+    ~PassthroughTester() {
+        _passthrough->intercept_incoming_messages_async(nullptr);
+    }
+
+};
 };

@@ -1,0 +1,5 @@
+ParamReadWriteInteger:
+  param_id: SYS_HITL
+  default_value: 0
+  change_value: 1
+

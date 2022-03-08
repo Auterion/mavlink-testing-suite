@@ -13,7 +13,8 @@
     template<>                                                                                \
     struct msg_helper<MESSAGE_SHORT_UC> {                             \
         using decode_type = MAVLINK_MSG_TYPE(MESSAGE_SHORT);                                          \
-        static constexpr int ID = MAVLINK_MSG_ID(MESSAGE_SHORT_UC);                       \
+        static constexpr int ID = MAVLINK_MSG_ID(MESSAGE_SHORT_UC);                                                           \
+        static constexpr char NAME[] = #MESSAGE_SHORT_UC;                                             \
         template<typename... Args>                                                                     \
         static void pack(Args... args) {                                                      \
             MAVLINK_MSG_PACK(MESSAGE_SHORT)(args...);                                         \
@@ -30,4 +31,6 @@ struct msg_helper {};
 
 USE_MESSAGE(param_value, PARAM_VALUE)
 USE_MESSAGE(param_request_read, PARAM_REQUEST_READ)
+USE_MESSAGE(param_set, PARAM_SET)
+USE_MESSAGE(param_request_list, PARAM_REQUEST_LIST)
 

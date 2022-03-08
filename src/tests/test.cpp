@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "../environment.hpp"
 
+using namespace MavlinkTestingSuite;
+
 // Demonstrate some basic assertions.
 TEST(HelloTest, BasicAssertions) {
 

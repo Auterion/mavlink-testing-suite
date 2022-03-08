@@ -21,14 +21,21 @@ int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
     
-    if (argc != 2) {
-        std::cout << "Usage: mavlink_test_suite CONNECTION_URL [gtest arguments]" << std::endl;
+    if (argc < 2) {
+        std::cout << "Usage: mavlink_test_suite CONNECTION_URL [yaml-config file] [gtest arguments]" << std::endl;
         return 1;
     }
 
+    const std::string yaml_path = (argc > 2) ? argv[2] : "./config/config.yaml";
     const std::string connection_url{argv[1]};
-    Environment::create(connection_url);
 
-    ::testing::AddGlobalTestEnvironment(Environment::getInstance());
+    try {
+        MavlinkTestingSuite::Environment::create(connection_url, yaml_path);
+    } catch(YAML::BadFile &e) {
+        std::cerr << "YAML file load \""<< yaml_path << "\" failed: " << e.msg << std::endl;
+        exit(1);
+    }
+
+    ::testing::AddGlobalTestEnvironment(MavlinkTestingSuite::Environment::getInstance());
     return RUN_ALL_TESTS();
 }
