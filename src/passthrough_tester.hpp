@@ -23,7 +23,7 @@ private:
     std::mutex _map_mutex;
 
     void passthroughIntercept(mavlink_message_t &message) {
-        std::unique_lock lock(_map_mutex);
+        std::scoped_lock lock(_map_mutex);
 
         if ((_promise_map[message.msgid]).empty()) {
             (_message_queue_map[message.msgid]).push_back(message);
@@ -52,7 +52,7 @@ public:
     }
 
     template<int MSG>
-    typename msg_helper<MSG>::decode_type receive(uint32_t timeout_us) {
+    typename msg_helper<MSG>::decode_type receive(uint32_t timeout_ms) {
         mavlink_message_t msg;
         {
             std::unique_lock lock(_map_mutex);
@@ -62,7 +62,7 @@ public:
                 auto fut = prom->get_future();
                 (_promise_map[msg_helper<MSG>::ID]).push_back(prom);
                 lock.unlock();
-                if (fut.wait_for(std::chrono::milliseconds(timeout_us)) == std::future_status::timeout) {
+                if (fut.wait_for(std::chrono::milliseconds(timeout_ms)) == std::future_status::timeout) {
                     throw TimeoutError("Message receive timeout for message " + std::string(msg_helper<MSG>::NAME));
                 }
                 msg = fut.get();
@@ -84,11 +84,13 @@ public:
 
     template<int MSG>
     void flush() {
+        std::scoped_lock lock{_map_mutex};
         (_promise_map[msg_helper<MSG>::ID]).clear();
         (_message_queue_map[msg_helper<MSG>::ID]).clear();
     }
 
     void flushAll() {
+        std::scoped_lock lock{_map_mutex};
         _promise_map.clear();
         _message_queue_map.clear();
     }
