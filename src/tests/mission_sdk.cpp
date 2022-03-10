@@ -17,7 +17,6 @@ protected:
 };
 
 
-
 mavsdk::Mission::MissionItem makeMissionItem(double latitude_deg, double longitude_deg,
                                                       float relative_altitude_m) {
     mavsdk::Mission::MissionItem new_item{};

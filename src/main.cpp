@@ -10,7 +10,6 @@
 #include <memory>
 #include <vector>
 #include <chrono>
-#include "tests/base.h"
 #include "environment.hpp"
 
 #include "gtest/gtest.h"

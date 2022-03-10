@@ -46,7 +46,9 @@ FetchContent_MakeAvailable(googletest)
 
 set(TEST_SOURCES
     src/tests/param.cpp
-    src/tests/mission_sdk.cpp)
+    src/tests/mission_sdk.cpp
+    src/tests/mission.cpp
+        )
 
 enable_testing()
 add_executable(mavlink_testing_suite

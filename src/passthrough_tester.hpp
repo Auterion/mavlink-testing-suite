@@ -63,7 +63,7 @@ public:
                 (_promise_map[msg_helper<MSG>::ID]).push_back(prom);
                 lock.unlock();
                 if (fut.wait_for(std::chrono::milliseconds(timeout_us)) == std::future_status::timeout) {
-                    throw TimeoutError("Message receive timeout");
+                    throw TimeoutError("Message receive timeout for message " + std::string(msg_helper<MSG>::NAME));
                 }
                 msg = fut.get();
             } else {
@@ -80,6 +80,17 @@ public:
     template<int MSG>
     typename msg_helper<MSG>::decode_type receive() {
         return receive<MSG>(100);
+    }
+
+    template<int MSG>
+    void flush() {
+        (_promise_map[msg_helper<MSG>::ID]).clear();
+        (_message_queue_map[msg_helper<MSG>::ID]).clear();
+    }
+
+    void flushAll() {
+        _promise_map.clear();
+        _message_queue_map.clear();
     }
 
     ~PassthroughTester() {

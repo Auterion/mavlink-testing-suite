@@ -11,7 +11,9 @@ protected:
 
     Params() : 
     link(Environment::getInstance()->getPassthroughTester()), 
-    config(Environment::getInstance()->getConfig()) {}
+    config(Environment::getInstance()->getConfig()) {
+        link->flushAll();
+    }
 };
 
 std::string paramIdString(const char* param_id) {
