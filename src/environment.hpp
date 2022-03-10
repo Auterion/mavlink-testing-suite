@@ -3,6 +3,7 @@
 #include <mavsdk/mavsdk.h>
 #include <mavsdk/plugins/mavlink_passthrough/mavlink_passthrough.h>
 #include <mavsdk/plugins/telemetry/telemetry.h>
+#include <mavsdk/plugins/mission/mission.h>
 #include <yaml-cpp/yaml.h>
 #include "gtest/gtest.h"
 #include <chrono>
@@ -42,6 +43,7 @@ private:
     std::shared_ptr<mavsdk::System> _system;
     std::shared_ptr<mavsdk::MavlinkPassthrough> _mavlinkPassthrough;
     std::shared_ptr<mavsdk::Telemetry> _telemetry;
+    std::shared_ptr<mavsdk::Mission> _mission;
     std::shared_ptr<PassthroughTester> _tester;
 
     static std::shared_ptr<mavsdk::System> getSystem(mavsdk::Mavsdk& mavsdk)
@@ -108,6 +110,7 @@ public:
         }
         _mavlinkPassthrough = std::make_shared<mavsdk::MavlinkPassthrough>(_system);
         _telemetry = std::make_shared<mavsdk::Telemetry>(_system);
+        _mission = std::make_shared<mavsdk::Mission>(_system);
         _tester = std::make_shared<PassthroughTester>(_mavlinkPassthrough);
     }
 
@@ -115,12 +118,16 @@ public:
         return _system;
     }
 
-    std::shared_ptr<mavsdk::MavlinkPassthrough> getPassthrough() const {
+    std::shared_ptr<mavsdk::MavlinkPassthrough> getPassthroughPlugin() const {
         return _mavlinkPassthrough;
     }
 
-    std::shared_ptr<mavsdk::Telemetry> getTelemetry() const {
+    std::shared_ptr<mavsdk::Telemetry> getTelemetryPlugin() const {
         return _telemetry;
+    }
+
+    std::shared_ptr<mavsdk::Mission> getMissionPlugin() const {
+        return _mission;
     }
 
     std::shared_ptr<PassthroughTester> getPassthroughTester() const {
@@ -133,6 +140,7 @@ public:
 
     void TearDown() override {
         _tester = nullptr;
+        _mission = nullptr;
         _mavlinkPassthrough = nullptr;
         _telemetry = nullptr;
         _system = nullptr;

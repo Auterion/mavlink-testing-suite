@@ -45,8 +45,8 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 set(TEST_SOURCES
-    src/tests/test.cpp
-    src/tests/param.cpp)
+    src/tests/param.cpp
+    src/tests/mission_sdk.cpp)
 
 enable_testing()
 add_executable(mavlink_testing_suite
