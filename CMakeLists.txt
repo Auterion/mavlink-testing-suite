@@ -48,7 +48,7 @@ set(TEST_SOURCES
     src/tests/param.cpp
     src/tests/mission_sdk.cpp
     src/tests/mission.cpp
-        src/tests/telemetry.cpp)
+        src/tests/telemetry.cpp src/tests/command.cpp)
 
 enable_testing()
 add_executable(mavlink_testing_suite

@@ -123,5 +123,9 @@ TEST_F(Telemetry, HavePositionTarget) {
     EXPECT_GT(freq, 0.);
 }
 
-
+TEST_F(Telemetry, HaveEstimatorStatus) {
+    double freq = measureInterval<ESTIMATOR_STATUS>(2);
+    printf("ESTIMATOR_STATUS interval %.2f Hz\n", freq);
+    EXPECT_GT(freq, 0.);
+}
 

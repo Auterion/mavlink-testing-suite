@@ -56,4 +56,5 @@ USE_MESSAGE(heartbeat, HEARTBEAT)
 USE_MESSAGE(home_position, HOME_POSITION)
 USE_MESSAGE(local_position_ned, LOCAL_POSITION_NED)
 USE_MESSAGE(position_target_local_ned, POSITION_TARGET_LOCAL_NED)
+USE_MESSAGE(estimator_status, ESTIMATOR_STATUS)
 
