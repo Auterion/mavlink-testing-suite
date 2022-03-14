@@ -65,13 +65,18 @@ TEST_F(Params, ParamListAll) {
         }
     } while(static_cast<int>(received_param_ids.size()) < count);
 
-    std::cout << received_param_ids.size() << std::endl;
-
     EXPECT_EQ(received_param_ids.size(), count) << "Did not receive all params";
     // next receive should time out
     try {
-        link->receive<PARAM_VALUE>();
-        FAIL() << "Received more params";
+        while (true) {
+            // we expect this to time out.
+            // if it does not (we receive another param), it is only okay if we already have
+            // that param
+            auto extra = link->receive<PARAM_VALUE>();
+            if (received_param_ids.find(paramIdString(extra.param_id)) == received_param_ids.end()) {
+                FAIL() << "Received more params. Extra param " << paramIdString(extra.param_id);
+            }
+        }
     } catch(TimeoutError&) {}
 }
 

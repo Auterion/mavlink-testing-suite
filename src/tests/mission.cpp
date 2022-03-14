@@ -122,16 +122,20 @@ TEST_F(Mission, UploadAndDownload) {
 TEST_F(Mission, SetCurrentItem) {
     uploadMission();
     link->send<MISSION_SET_CURRENT>(1, 1, 2);
-    // drop all queued MISSION_CURRENT messages to be sure to get the latest only
+    // drop all queued MISSION_CURRENT messages
     link->flush<MISSION_CURRENT>();
-    auto curr = link->receive<MISSION_CURRENT>();
-    EXPECT_EQ(curr.seq, 2);
-
-    // try out of range
-    link->send<MISSION_SET_CURRENT>(1, 1, 101);
-    curr = link->receive<MISSION_CURRENT>();
-    link->flush<MISSION_CURRENT>();
-    EXPECT_EQ(curr.seq, 2);
+    // MISSION_CURRENT is potentially sent at high rate. It could be some
+    // messages until we observe the change, so we observe the next 10 messages
+    const int OBSERVE_N = 10;
+    for (int i=0; i<OBSERVE_N; i++) {
+        auto curr = link->receive<MISSION_CURRENT>();
+        if (curr.seq == 2) {
+            break;
+        }
+        if (i == OBSERVE_N-1) {
+            FAIL() << "MISSION_CURRENT sequence not changed to 2";
+        }
+    }
     clearAll();
 }
 

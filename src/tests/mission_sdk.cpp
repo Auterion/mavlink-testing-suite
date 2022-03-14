@@ -14,29 +14,32 @@ protected:
     MissionSDK() :
     mission(Environment::getInstance()->getMissionPlugin()),
     config(Environment::getInstance()->getConfig()) {}
+
+
+    mavsdk::Mission::MissionItem makeMissionItem(double latitude_deg, double longitude_deg,
+                                                 float relative_altitude_m) {
+        mavsdk::Mission::MissionItem new_item{};
+        new_item.latitude_deg = latitude_deg;
+        new_item.longitude_deg = longitude_deg;
+        new_item.relative_altitude_m = relative_altitude_m;
+        new_item.acceptance_radius_m = 1.;
+        return new_item;
+    }
+
+    mavsdk::Mission::MissionPlan assembleMissionPlan() {
+        mavsdk::Mission::MissionPlan plan;
+
+        for (int i = 0; i < 15; ++i) {
+            float altitude = 10.F + (float)i;
+            double latitude = config["Mission"]["home_lat"].as<double>() + (double)i * 1e-5;
+            double longitude = config["Mission"]["home_lon"].as<double>();
+            plan.mission_items.push_back(makeMissionItem(latitude, longitude, altitude));
+        }
+        return plan;
+    }
+
 };
 
-
-mavsdk::Mission::MissionItem makeMissionItem(double latitude_deg, double longitude_deg,
-                                                      float relative_altitude_m) {
-    mavsdk::Mission::MissionItem new_item{};
-    new_item.latitude_deg = latitude_deg;
-    new_item.longitude_deg = longitude_deg;
-    new_item.relative_altitude_m = relative_altitude_m;
-    new_item.acceptance_radius_m = 1.;
-    return new_item;
-}
-
-mavsdk::Mission::MissionPlan assembleMissionPlan() {
-    mavsdk::Mission::MissionPlan plan;
-
-    for (int i = 0; i < 15; ++i) {
-        float altitude = 10.F + (float)i;
-        double latitude = 47.398170327054473 + (double)i * 1e-5;
-        plan.mission_items.push_back(makeMissionItem(latitude, 8.5456490218639658, altitude));
-    }
-    return plan;
-}
 
 
 TEST_F(MissionSDK, UploadDownloadCompare) {

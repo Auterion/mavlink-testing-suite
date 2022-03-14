@@ -16,6 +16,8 @@ protected:
     const std::shared_ptr<PassthroughTester> link;
     const YAML::Node config;
 
+    static constexpr double RATE_MARGIN = 0.2;
+
     Telemetry() :
           link(Environment::getInstance()->getPassthroughTester()),
           config(Environment::getInstance()->getConfig()) {
@@ -23,7 +25,7 @@ protected:
     }
 
     template<int MSG>
-    double measureInterval(int n_samples) {
+    double measureRate(int n_samples) {
         assert(n_samples > 1);
         link->flush<MSG>();
         uint64_t last_received = 0;
@@ -45,87 +47,93 @@ protected:
 };
 
 TEST_F(Telemetry, HaveHeartbeat) {
-    double freq = measureInterval<HEARTBEAT>(3);
+    double freq = measureRate<HEARTBEAT>(3);
     printf("HEARTBEAT interval %.2f Hz", freq);
-    EXPECT_GT(freq, 0.);
+    EXPECT_GT(freq, 1. - RATE_MARGIN);
 }
 
 
 TEST_F(Telemetry, HaveBatteryStatus) {
-    double freq = measureInterval<BATTERY_STATUS>(2);
+    double freq = measureRate<BATTERY_STATUS>(2);
     printf("BATTERY_STATUS interval %.2f Hz", freq);
-    EXPECT_GT(freq, 0.);
+    EXPECT_GT(freq, 1. - RATE_MARGIN);
 }
 
 TEST_F(Telemetry, HaveSysStatus) {
-    double freq = measureInterval<SYS_STATUS>(2);
+    double freq = measureRate<SYS_STATUS>(2);
     printf("SYS_STATUS interval %.2f Hz\n", freq);
-    EXPECT_GT(freq, 0.);
+    EXPECT_GT(freq, 1. - RATE_MARGIN);
 }
 
 TEST_F(Telemetry, HaveExtendedSysStatus) {
-    double freq = measureInterval<EXTENDED_SYS_STATE>(2);
+    double freq = measureRate<EXTENDED_SYS_STATE>(2);
     printf("EXTENDED_SYS_STATE interval %.2f Hz\n", freq);
-    EXPECT_GT(freq, 0.);
+    EXPECT_GT(freq, 2. - RATE_MARGIN);
 }
 
 TEST_F(Telemetry, HaveGPSRaw) {
-    double freq = measureInterval<GPS_RAW_INT>(3);
+    double freq = measureRate<GPS_RAW_INT>(3);
     printf("GPS_RAW_INT interval %.2f Hz\n", freq);
-    EXPECT_GT(freq, 0.);
+    EXPECT_GT(freq, 5. - RATE_MARGIN);
 }
 
 TEST_F(Telemetry, HaveGlobalPosition) {
-    double freq = measureInterval<GLOBAL_POSITION_INT>(3);
+    double freq = measureRate<GLOBAL_POSITION_INT>(3);
     printf("GLOBAL_POSITION_INT interval %.2f Hz\n", freq);
-    EXPECT_GT(freq, 0.);
+    EXPECT_GT(freq, 5. - RATE_MARGIN);
 }
 
 TEST_F(Telemetry, HaveAltitude) {
-    double freq = measureInterval<ALTITUDE>(3);
+    double freq = measureRate<ALTITUDE>(3);
     printf("ALTITUDE interval %.2f Hz\n", freq);
-    EXPECT_GT(freq, 0.);
+    EXPECT_GT(freq, 5. - RATE_MARGIN);
 }
 
 TEST_F(Telemetry, HaveVFRHUD) {
-    double freq = measureInterval<VFR_HUD>(3);
+    double freq = measureRate<VFR_HUD>(3);
     printf("VFR_HUD interval %.2f Hz\n", freq);
     EXPECT_GT(freq, 0.);
 }
 
+TEST_F(Telemetry, HaveAttitude) {
+    double freq = measureRate<ATTITUDE>(5);
+    printf("ATTITUDE interval %.2f Hz\n", freq);
+    EXPECT_GT(freq, 30. - RATE_MARGIN);
+}
+
 TEST_F(Telemetry, HaveAttitudeQuaternion) {
-    double freq = measureInterval<ATTITUDE_QUATERNION>(5);
+    double freq = measureRate<ATTITUDE_QUATERNION>(5);
     printf("ATTITUDE_QUATERNION interval %.2f Hz\n", freq);
     EXPECT_GT(freq, 0.);
 }
 
 TEST_F(Telemetry, HaveAttitudeTarget) {
-    double freq = measureInterval<ATTITUDE_TARGET>(5);
+    double freq = measureRate<ATTITUDE_TARGET>(5);
     printf("ATTITUDE_TARGET interval %.2f Hz\n", freq);
     EXPECT_GT(freq, 0.);
 }
 
 TEST_F(Telemetry, HaveHomePosition) {
-    double freq = measureInterval<HOME_POSITION>(2);
+    double freq = measureRate<HOME_POSITION>(2);
     printf("HOME_POSITION interval %.2f Hz\n", freq);
     EXPECT_GT(freq, 0.);
 }
 
 TEST_F(Telemetry, HaveLocalPosition) {
-    double freq = measureInterval<LOCAL_POSITION_NED>(5);
+    double freq = measureRate<LOCAL_POSITION_NED>(5);
     printf("LOCAL_POSITION_NED interval %.2f Hz\n", freq);
     EXPECT_GT(freq, 0.);
 }
 
 TEST_F(Telemetry, HavePositionTarget) {
-    double freq = measureInterval<POSITION_TARGET_LOCAL_NED>(5);
+    double freq = measureRate<POSITION_TARGET_LOCAL_NED>(5);
     printf("POSITION_TARGET_LOCAL_NED interval %.2f Hz\n", freq);
     EXPECT_GT(freq, 0.);
 }
 
 TEST_F(Telemetry, HaveEstimatorStatus) {
-    double freq = measureInterval<ESTIMATOR_STATUS>(2);
+    double freq = measureRate<ESTIMATOR_STATUS>(2);
     printf("ESTIMATOR_STATUS interval %.2f Hz\n", freq);
-    EXPECT_GT(freq, 0.);
+    EXPECT_GT(freq, 1. - RATE_MARGIN);
 }
 
