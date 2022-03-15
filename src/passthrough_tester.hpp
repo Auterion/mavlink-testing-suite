@@ -63,6 +63,9 @@ public:
                 (_promise_map[msg_helper<MSG>::ID]).push_back(prom);
                 lock.unlock();
                 if (fut.wait_for(std::chrono::milliseconds(timeout_ms)) == std::future_status::timeout) {
+                    lock.lock();
+                    (_promise_map[msg_helper<MSG>::ID]).clear();
+                    lock.unlock();
                     throw TimeoutError("Message receive timeout for message " + std::string(msg_helper<MSG>::NAME));
                 }
                 msg = fut.get();

@@ -4,7 +4,7 @@
 using namespace MavlinkTestingSuite;
 
 // Get current timestamp in microseconds
-uint64_t micros() {
+inline uint64_t micros() {
     struct timeval t;
     gettimeofday(&t, nullptr);
     return t.tv_sec * ((uint64_t)1000000) + t.tv_usec;

@@ -51,7 +51,6 @@ protected:
         };
     }
 
-
     void uploadMission(int N_ITEMS=10) {
 
         link->send<MISSION_COUNT>(1, 1, N_ITEMS, MAV_MISSION_TYPE_MISSION);
@@ -140,11 +139,12 @@ TEST_F(Mission, SetCurrentItem) {
 }
 
 
-TEST_F(Mission, UploadGeofence) {
+TEST_F(Mission, UploadPolygonFence) {
     link->send<MISSION_COUNT>(1, 1, 4, MAV_MISSION_TYPE_FENCE);
     auto req = link->receive<MISSION_REQUEST_INT>();
     EXPECT_EQ(req.seq, 0);
 
+    // send inclusion fence
     for (int i=0; i<4; i++) {
         auto c = fenceCoordGen(i);
         link->send<MISSION_ITEM_INT>(1, 1, i, MAV_FRAME_GLOBAL_INT, MAV_CMD_NAV_FENCE_POLYGON_VERTEX_INCLUSION, 0, 0,
@@ -159,6 +159,55 @@ TEST_F(Mission, UploadGeofence) {
         }
     }
 
+    link->send<MISSION_COUNT>(1, 1, 4, MAV_MISSION_TYPE_FENCE);
+    req = link->receive<MISSION_REQUEST_INT>();
+    EXPECT_EQ(req.seq, 0);
+    // send exclusion fence
+    for (int i=0; i<4; i++) {
+        auto c = fenceCoordGen(i);
+        link->send<MISSION_ITEM_INT>(1, 1, i, MAV_FRAME_GLOBAL_INT, MAV_CMD_NAV_FENCE_POLYGON_VERTEX_EXCLUSION, 0, 0,
+                                     4.f, 2.f, NAN, NAN,
+                                     c.latitude, c.longitude, c.altitude, MAV_MISSION_TYPE_FENCE);
+        if (i<3) {
+            req = link->receive<MISSION_REQUEST_INT>();
+            EXPECT_EQ(req.seq, i+1);
+        } else {
+            auto ack = link->receive<MISSION_ACK>();
+            EXPECT_EQ(ack.type, MAV_MISSION_ACCEPTED) << "Fence not accepted" << std::endl;
+        }
+    }
+
     clearAll();
 }
 
+TEST_F(Mission, UploadCircularFence) {
+    double latitude = config["Mission"]["home_lat"].as<double>();
+    double longitude = config["Mission"]["home_lon"].as<double>();
+
+    link->send<MISSION_COUNT>(1, 1, 2, MAV_MISSION_TYPE_FENCE);
+    auto req = link->receive<MISSION_REQUEST_INT>();
+    EXPECT_EQ(req.seq, 0);
+    link->send<MISSION_ITEM_INT>(1, 1, 0, MAV_FRAME_GLOBAL_INT, MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION, 0, 0,
+                                 100.f, 1.f, NAN, NAN,
+                                 latitude, longitude, 0, MAV_MISSION_TYPE_FENCE);
+    req = link->receive<MISSION_REQUEST_INT>();
+    EXPECT_EQ(req.seq, 1);
+    link->send<MISSION_ITEM_INT>(1, 1, 1, MAV_FRAME_GLOBAL_INT, MAV_CMD_NAV_FENCE_CIRCLE_EXCLUSION, 0, 0,
+                                 20.f, 1.f, NAN, NAN,
+                                 latitude, longitude, 0, MAV_MISSION_TYPE_FENCE);
+    auto ack = link->receive<MISSION_ACK>();
+    EXPECT_EQ(ack.type, MAV_MISSION_ACCEPTED) << "Fence not accepted" << std::endl;
+    clearAll();
+}
+
+TEST_F(Mission, UploadRallyPoints) {
+    link->send<MISSION_COUNT>(1, 1, 1, MAV_MISSION_TYPE_RALLY);
+    auto req = link->receive<MISSION_REQUEST_INT>();
+    EXPECT_EQ(req.seq, 0);
+    auto c = fenceCoordGen(0);
+    link->send<MISSION_ITEM_INT>(1, 1, 0, MAV_FRAME_GLOBAL_INT, MAV_CMD_NAV_RALLY_POINT, 0, 1,
+                                 NAN, NAN, NAN, NAN, c.latitude, c.longitude, c.altitude, MAV_MISSION_TYPE_RALLY);
+    auto ack = link->receive<MISSION_ACK>();
+    EXPECT_EQ(ack.type, MAV_MISSION_ACCEPTED) << "Rally point not accepted" << std::endl;
+    clearAll();
+}
