@@ -7,3 +7,6 @@ Mission:
   home_lat: 45.4671160
   home_lon: -73.7578370
 
+FTP:
+  file_size: 10000
+  target_path: "/fs/microsd/"
