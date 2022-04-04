@@ -51,6 +51,37 @@ TEST_F(Params, ParamReadWriteInteger) {
     EXPECT_EQ(paramIdString(r4.param_id), param_id) << "Returned param ID does not match requested param ID";
 }
 
+TEST_F(Params, ParamReadWriteFloat) {
+    auto conf = config["ParamReadWriteFloat"];
+    auto param_id = conf["param_id"].as<std::string>();
+    auto default_value = conf["default_value"].as<float>();
+    auto change_value = conf["change_value"].as<float>();
+
+    // Read current value
+    link->send<PARAM_REQUEST_READ>(1, 1, param_id.c_str(), -1);
+    auto r1 = link->receive<PARAM_VALUE>();
+    EXPECT_EQ(paramIdString(r1.param_id), param_id) << "Returned param ID does not match requested param ID";
+    EXPECT_EQ(floatUnpack<float>(r1.param_value), default_value) << "Returned value for param " << param_id << " does not have configured default value";
+    EXPECT_EQ(r1.param_type, MAV_PARAM_TYPE_REAL32) << "Returned param type is wrong";
+
+    // Write new value
+    link->send<PARAM_SET>(1, 1, param_id.c_str(), change_value, MAV_PARAM_TYPE_REAL32);
+    auto r2 = link->receive<PARAM_VALUE>();
+    EXPECT_EQ(paramIdString(r2.param_id), param_id) << "Returned param ID does not match requested param ID";
+
+    // Re-read new value
+    link->send<PARAM_REQUEST_READ>(1, 1, param_id.c_str(), -1);
+    auto r3 = link->receive<PARAM_VALUE>();
+    EXPECT_EQ(paramIdString(r3.param_id), param_id) << "Returned param ID does not match requested param ID";
+    EXPECT_EQ(floatUnpack<float>(r3.param_value), change_value) << "Returned value for param " << param_id << " is not changed value";
+    EXPECT_EQ(r3.param_type, MAV_PARAM_TYPE_REAL32) << "Returned param type is wrong";
+
+    // Restore default value
+    link->send<PARAM_SET>(1, 1, param_id.c_str(), floatPack(default_value), MAV_PARAM_TYPE_REAL32);
+    auto r4 = link->receive<PARAM_VALUE>();
+    EXPECT_EQ(paramIdString(r4.param_id), param_id) << "Returned param ID does not match requested param ID";
+}
+
 TEST_F(Params, ParamListAll) {
     link->send<PARAM_REQUEST_LIST>(1, 1);
     int count = 0;

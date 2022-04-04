@@ -3,6 +3,11 @@ ParamReadWriteInteger:
   default_value: 0
   change_value: 1
 
+ParamReadWriteFloat:
+  param_id: MPC_ACC_DOWN_MAX
+  default_value: 10.0
+  change_value: 3.0
+
 Mission:
   home_lat: 45.4671160
   home_lon: -73.7578370

@@ -29,3 +29,34 @@ TEST_F(Command, RequestMessage) {
     auto version = link->receive<PROTOCOL_VERSION>(1000);
     EXPECT_GE(version.version, 200);
 }
+
+TEST_F(Command, RequestProtocolVersion) {
+    // make sure there is no PROTOCOL_VERSION being published
+    try {
+        link->receive<PROTOCOL_VERSION>();
+        FAIL() << "PROTOCOL_VERSION published before requesting. Can not do test";
+    } catch(...) {}
+    link->send<COMMAND_LONG>(1, 1,
+                             MAV_CMD_REQUEST_PROTOCOL_VERSION, 0,
+                             1.f, NAN, NAN, NAN, NAN, NAN, NAN);
+    auto ack = link->receive<COMMAND_ACK>();
+    EXPECT_EQ(ack.result, MAV_RESULT_ACCEPTED);
+    EXPECT_EQ(ack.command, MAV_CMD_REQUEST_PROTOCOL_VERSION);
+    auto version = link->receive<PROTOCOL_VERSION>(1000);
+    EXPECT_GE(version.version, 200);
+}
+
+TEST_F(Command, RequestAutopilotCapabilities) {
+    // make sure there is no PROTOCOL_VERSION being published
+    try {
+        link->receive<AUTOPILOT_VERSION>();
+        FAIL() << "AUTOPILOT_VERSION published before requesting. Can not do test";
+    } catch(...) {}
+    link->send<COMMAND_LONG>(1, 1,
+                             MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES, 0,
+                             1.f, NAN, NAN, NAN, NAN, NAN, NAN);
+    auto ack = link->receive<COMMAND_ACK>();
+    EXPECT_EQ(ack.result, MAV_RESULT_ACCEPTED);
+    EXPECT_EQ(ack.command, MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES);
+    link->receive<AUTOPILOT_VERSION>(1000);
+}
