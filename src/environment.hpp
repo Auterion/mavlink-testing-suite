@@ -99,6 +99,10 @@ public:
 
     void SetUp() override {
         _mavsdk = std::make_shared<mavsdk::Mavsdk>();
+        auto configuration = mavsdk::Mavsdk::Configuration(mavsdk::Mavsdk::Configuration::UsageType::GroundStation);
+        configuration.set_system_id(255);
+        _mavsdk->set_configuration(configuration);
+
         mavsdk::ConnectionResult connection_result = _mavsdk->add_any_connection(_connection_url);
 
         if (connection_result != mavsdk::ConnectionResult::Success) {
