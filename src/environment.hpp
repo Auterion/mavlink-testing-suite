@@ -43,7 +43,6 @@ private:
     std::shared_ptr<mavsdk::Mavsdk> _mavsdk;
     std::shared_ptr<mavsdk::System> _system;
     std::shared_ptr<mavsdk::MavlinkPassthrough> _mavlinkPassthrough;
-    std::shared_ptr<mavsdk::Telemetry> _telemetry;
     std::shared_ptr<mavsdk::Mission> _mission;
     std::shared_ptr<mavsdk::Ftp> _ftp;
     std::shared_ptr<PassthroughTester> _tester;
@@ -111,7 +110,6 @@ public:
             throw std::runtime_error("No system found");
         }
         _mavlinkPassthrough = std::make_shared<mavsdk::MavlinkPassthrough>(_system);
-        _telemetry = std::make_shared<mavsdk::Telemetry>(_system);
         _mission = std::make_shared<mavsdk::Mission>(_system);
         _ftp = std::make_shared<mavsdk::Ftp>(_system);
         _tester = std::make_shared<PassthroughTester>(_mavlinkPassthrough);
@@ -123,10 +121,6 @@ public:
 
     std::shared_ptr<mavsdk::MavlinkPassthrough> getPassthroughPlugin() const {
         return _mavlinkPassthrough;
-    }
-
-    std::shared_ptr<mavsdk::Telemetry> getTelemetryPlugin() const {
-        return _telemetry;
     }
 
     std::shared_ptr<mavsdk::Mission> getMissionPlugin() const {
@@ -150,7 +144,6 @@ public:
         _ftp = nullptr;
         _mission = nullptr;
         _mavlinkPassthrough = nullptr;
-        _telemetry = nullptr;
         _system = nullptr;
         _mavsdk = nullptr;
     }

@@ -65,7 +65,7 @@ TEST_F(Params, ParamReadWriteFloat) {
     EXPECT_EQ(r1.param_type, MAV_PARAM_TYPE_REAL32) << "Returned param type is wrong";
 
     // Write new value
-    link->send<PARAM_SET>(1, 1, param_id.c_str(), change_value, MAV_PARAM_TYPE_REAL32);
+    link->send<PARAM_SET>(1, 1, param_id.c_str(), floatPack(change_value), MAV_PARAM_TYPE_REAL32);
     auto r2 = link->receive<PARAM_VALUE>();
     EXPECT_EQ(paramIdString(r2.param_id), param_id) << "Returned param ID does not match requested param ID";
 
