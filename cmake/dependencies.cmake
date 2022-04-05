@@ -6,7 +6,7 @@ if(MAVSDK_INSTALL_DIR)
     link_directories(${MAVSDK_INSTALL_DIR}/lib)
 else()
     # clone and build MAVSDK via ExternalProject
-    set(MAVSDK_TAG b915a84f61570f338c5ccf979fc7890560a2d512)
+    set(MAVSDK_TAG 613debe3e943181829c75050b8c3ed3cd3cd3821)
     message(STATUS "Building MAVSDK tag ${MAVSDK_TAG}")
     ExternalProject_Add(third_party_mavsdk
         SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/third_party/MAVSDK"
