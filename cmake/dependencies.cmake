@@ -13,7 +13,7 @@ else()
         CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk/install
             -DBUILD_TESTS=OFF
-        GIT_REPOSITORY git@github.com:Auterion/MAVSDK.git
+        GIT_REPOSITORY https://github.com/Auterion/MAVSDK.git
         GIT_TAG ${MAVSDK_TAG}
         BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/build_mavsdk
         INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
