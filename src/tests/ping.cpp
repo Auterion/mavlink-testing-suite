@@ -24,6 +24,10 @@ protected:
 };
 
 TEST_F(Ping, PingPong) {
+    auto cfg = config["Ping"]["PingPong"];
+    if (cfg["skip"].as<bool>()) {
+        GTEST_SKIP();
+    }
     // broadcast systemid, componentid
     link->send<PING>(micros(), 0, 0, 0);
     auto res = link->receive<PING>();

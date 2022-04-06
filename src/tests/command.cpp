@@ -15,6 +15,10 @@ protected:
 };
 
 TEST_F(Command, RequestMessage) {
+    auto cfg = config["Command"]["RequestMessage"];
+    if (cfg["skip"].as<bool>()) {
+        GTEST_SKIP();
+    }
     // make sure there is no PROTOCOL_VERSION being published
     try {
         link->receive<PROTOCOL_VERSION>();
@@ -31,6 +35,10 @@ TEST_F(Command, RequestMessage) {
 }
 
 TEST_F(Command, RequestProtocolVersion) {
+    auto cfg = config["Command"]["RequestProtocolVersion"];
+    if (cfg["skip"].as<bool>()) {
+        GTEST_SKIP();
+    }
     // make sure there is no PROTOCOL_VERSION being published
     try {
         link->receive<PROTOCOL_VERSION>();
@@ -47,6 +55,10 @@ TEST_F(Command, RequestProtocolVersion) {
 }
 
 TEST_F(Command, RequestAutopilotCapabilities) {
+    auto cfg = config["Command"]["RequestAutopilotCapabilities"];
+    if (cfg["skip"].as<bool>()) {
+        GTEST_SKIP();
+    }
     // make sure there is no PROTOCOL_VERSION being published
     try {
         link->receive<AUTOPILOT_VERSION>();

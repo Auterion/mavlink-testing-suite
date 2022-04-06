@@ -43,6 +43,10 @@ protected:
 
 
 TEST_F(MissionSDK, UploadDownloadCompare) {
+    auto cfg = config["MissionSDK"]["UploadDownloadCompare"];
+    if (cfg["skip"].as<bool>()) {
+        GTEST_SKIP();
+    }
     const auto plan = assembleMissionPlan();
 
     // -- Upload mission --

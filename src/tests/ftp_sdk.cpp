@@ -110,6 +110,11 @@ protected:
 
 
 TEST_F(FTPSDK, UploadCompareDownloadCompare) {
+    auto cfg = config["FTP"]["UploadCompareDownloadCompare"];
+    if (cfg["skip"].as<bool>()) {
+        GTEST_SKIP();
+    }
+
     {
         auto prom = std::promise<mavsdk::Ftp::Result>{};
         auto future = prom.get_future();

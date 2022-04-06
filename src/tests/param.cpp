@@ -21,7 +21,10 @@ std::string paramIdString(const char* param_id) {
 }
 
 TEST_F(Params, ParamReadWriteInteger) {
-    auto conf = config["ParamReadWriteInteger"];
+    auto conf = config["Param"]["ParamReadWriteInteger"];
+    if (conf["skip"].as<bool>()) {
+        GTEST_SKIP();
+    }
     auto param_id = conf["param_id"].as<std::string>();
     auto default_value = conf["default_value"].as<int>();
     auto change_value = conf["change_value"].as<int>();
@@ -52,7 +55,10 @@ TEST_F(Params, ParamReadWriteInteger) {
 }
 
 TEST_F(Params, ParamReadWriteFloat) {
-    auto conf = config["ParamReadWriteFloat"];
+    auto conf = config["Param"]["ParamReadWriteFloat"];
+    if (conf["skip"].as<bool>()) {
+        GTEST_SKIP();
+    }
     auto param_id = conf["param_id"].as<std::string>();
     auto default_value = conf["default_value"].as<float>();
     auto change_value = conf["change_value"].as<float>();
@@ -83,6 +89,10 @@ TEST_F(Params, ParamReadWriteFloat) {
 }
 
 TEST_F(Params, ParamListAll) {
+    auto conf = config["Param"]["ParamReadWriteFloat"];
+    if (conf["skip"].as<bool>()) {
+        GTEST_SKIP();
+    }
     link->send<PARAM_REQUEST_LIST>(1, 1);
     int count = 0;
 

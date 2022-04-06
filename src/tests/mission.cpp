@@ -105,12 +105,20 @@ protected:
 
 
 TEST_F(Mission, Upload) {
+    auto cfg = config["Mission"]["Upload"];
+    if (cfg["skip"].as<bool>()) {
+        GTEST_SKIP();
+    }
     clearAll();
     uploadMission();
     clearAll();
 }
 
 TEST_F(Mission, UploadAndDownload) {
+    auto cfg = config["Mission"]["UploadAndDownload"];
+    if (cfg["skip"].as<bool>()) {
+        GTEST_SKIP();
+    }
     const int N_ITEMS = 10;
 
     uploadMission(N_ITEMS);
@@ -119,6 +127,10 @@ TEST_F(Mission, UploadAndDownload) {
 }
 
 TEST_F(Mission, SetCurrentItem) {
+    auto cfg = config["Mission"]["SetCurrentItem"];
+    if (cfg["skip"].as<bool>()) {
+        GTEST_SKIP();
+    }
     uploadMission();
     link->send<MISSION_SET_CURRENT>(1, 1, 2);
     // drop all queued MISSION_CURRENT messages
@@ -140,6 +152,10 @@ TEST_F(Mission, SetCurrentItem) {
 
 
 TEST_F(Mission, UploadPolygonFence) {
+    auto cfg = config["Mission"]["UploadPolygonFence"];
+    if (cfg["skip"].as<bool>()) {
+        GTEST_SKIP();
+    }
     link->send<MISSION_COUNT>(1, 1, 4, MAV_MISSION_TYPE_FENCE);
     auto req = link->receive<MISSION_REQUEST_INT>();
     EXPECT_EQ(req.seq, 0);
@@ -181,6 +197,10 @@ TEST_F(Mission, UploadPolygonFence) {
 }
 
 TEST_F(Mission, UploadCircularFence) {
+    auto cfg = config["Mission"]["UploadCircularFence"];
+    if (cfg["skip"].as<bool>()) {
+        GTEST_SKIP();
+    }
     double latitude = config["Mission"]["home_lat"].as<double>();
     double longitude = config["Mission"]["home_lon"].as<double>();
 
@@ -201,6 +221,10 @@ TEST_F(Mission, UploadCircularFence) {
 }
 
 TEST_F(Mission, UploadRallyPoints) {
+    auto cfg = config["Mission"]["UploadRallyPoints"];
+    if (cfg["skip"].as<bool>()) {
+        GTEST_SKIP();
+    }
     link->send<MISSION_COUNT>(1, 1, 1, MAV_MISSION_TYPE_RALLY);
     auto req = link->receive<MISSION_REQUEST_INT>();
     EXPECT_EQ(req.seq, 0);
