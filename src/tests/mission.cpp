@@ -23,6 +23,10 @@ protected:
     }
 
 
+    bool hasCapability(uint64_t capability) const {
+        return (Environment::getInstance()->getAutopilotVersion().capabilities & capability) == capability;
+    }
+
     // Dummy coordinate generator
     int_coord_t missionCoordGen(int seq) {
         float altitude = 10.F + (float)seq;
@@ -52,7 +56,7 @@ protected:
     }
 
     void uploadMission(int N_ITEMS=10) {
-
+        EXPECT_TRUE(hasCapability(MAV_PROTOCOL_CAPABILITY_COMMAND_INT)) << "MISSION_INT capability not reported";
         link->send<MISSION_COUNT>(1, 1, N_ITEMS, MAV_MISSION_TYPE_MISSION);
         auto req = link->receive<MISSION_REQUEST_INT>();
         EXPECT_EQ(req.seq, 0);
@@ -102,7 +106,6 @@ protected:
         EXPECT_EQ(ack.type, MAV_MISSION_ACCEPTED);
     }
 };
-
 
 TEST_F(Mission, Upload) {
     auto cfg = config["Mission"]["Upload"];
@@ -156,6 +159,8 @@ TEST_F(Mission, UploadPolygonFence) {
     if (cfg["skip"].as<bool>()) {
         GTEST_SKIP();
     }
+    EXPECT_TRUE(hasCapability(MAV_PROTOCOL_CAPABILITY_MISSION_FENCE)) << "MISSION_FENCE capability not reported";
+
     link->send<MISSION_COUNT>(1, 1, 4, MAV_MISSION_TYPE_FENCE);
     auto req = link->receive<MISSION_REQUEST_INT>();
     EXPECT_EQ(req.seq, 0);
@@ -201,6 +206,8 @@ TEST_F(Mission, UploadCircularFence) {
     if (cfg["skip"].as<bool>()) {
         GTEST_SKIP();
     }
+    EXPECT_TRUE(hasCapability(MAV_PROTOCOL_CAPABILITY_MISSION_FENCE)) << "MISSION_FENCE capability not reported";
+
     double latitude = config["Mission"]["home_lat"].as<double>();
     double longitude = config["Mission"]["home_lon"].as<double>();
 
@@ -225,6 +232,8 @@ TEST_F(Mission, UploadRallyPoints) {
     if (cfg["skip"].as<bool>()) {
         GTEST_SKIP();
     }
+    EXPECT_TRUE(hasCapability(MAV_PROTOCOL_CAPABILITY_MISSION_RALLY)) << "MISSION_RALLY capability not reported";
+
     link->send<MISSION_COUNT>(1, 1, 1, MAV_MISSION_TYPE_RALLY);
     auto req = link->receive<MISSION_REQUEST_INT>();
     EXPECT_EQ(req.seq, 0);

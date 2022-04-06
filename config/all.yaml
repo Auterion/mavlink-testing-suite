@@ -1,18 +1,18 @@
 Param:
   ParamReadWriteInteger:
-    skip: true
+    skip: false
     param_id: SYS_HITL
     default_value: 0
     change_value: 1
 
   ParamReadWriteFloat:
-    skip: true
+    skip: false
     param_id: MPC_ACC_DOWN_MAX
     default_value: 10.0
     change_value: 3.0
 
   ParamListAll:
-    skip: true
+    skip: false
 
 
 Telemetry:
@@ -33,7 +33,7 @@ Telemetry:
     skip: false
     minimal_rate: 5
   HaveGlobalPosition:
-    skip: true
+    skip: false
     minimal_rate: 5
   HaveAltitude:
     skip: false
@@ -45,22 +45,22 @@ Telemetry:
     skip: false
     minimal_rate: 1
   HaveAttitudeQuaternion:
-    skip: true
+    skip: false
     minimal_rate: 15
   HaveAttitudeTarget:
-    skip: true
+    skip: false
     minimal_rate: 0
   HaveHomePosition:
-    skip: true
+    skip: false
     minimal_rate: 0
   HaveLocalPosition:
-    skip: true
+    skip: false
     minimal_rate: 0
   HavePositionTarget:
-    skip: true
+    skip: false
     minimal_rate: 0
   HaveVFRHUD:
-    skip: true
+    skip: false
     minimal_rate: 0
 
 Mission:
@@ -76,11 +76,11 @@ Mission:
   SetCurrentItem:
     skip: false
   UploadPolygonFence:
-    skip: true
+    skip: false
   UploadCircularFence:
-    skip: true
+    skip: false
   UploadRallyPoints:
-    skip: true
+    skip: false
 
 MissionSDK:
   UploadDownloadCompare:
@@ -91,11 +91,11 @@ FTP:
   file_size: 10000
   target_path: "/fs/microsd/"
   UploadCompareDownloadCompare:
-    skip: true
+    skip: false
 
 Ping:
   PingPong:
-    skip: true
+    skip: false
 
 Command:
   RequestMessage:

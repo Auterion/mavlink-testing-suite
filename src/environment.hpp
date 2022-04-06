@@ -47,6 +47,8 @@ private:
     std::shared_ptr<mavsdk::Ftp> _ftp;
     std::shared_ptr<PassthroughTester> _tester;
 
+    mavsdk::System::AutopilotVersion _autopilotVersionData;
+
     static std::shared_ptr<mavsdk::System> getSystem(mavsdk::Mavsdk& mavsdk)
     {
         std::cout << "Waiting to discover system...\n";
@@ -113,6 +115,7 @@ public:
         if (!_system) {
             throw std::runtime_error("No system found");
         }
+        _autopilotVersionData = _system->get_autopilot_version_data();
         _mavlinkPassthrough = std::make_shared<mavsdk::MavlinkPassthrough>(_system);
         _mission = std::make_shared<mavsdk::Mission>(_system);
         _ftp = std::make_shared<mavsdk::Ftp>(_system);
@@ -141,6 +144,10 @@ public:
 
     const YAML::Node& getConfig() const {
         return _config;
+    }
+
+    const mavsdk::System::AutopilotVersion& getAutopilotVersion() const {
+        return _autopilotVersionData;
     }
 
     void TearDown() override {
