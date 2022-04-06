@@ -17,12 +17,12 @@ protected:
 TEST_F(Arm, ArmDisarm) {
     link->send<COMMAND_LONG>(1, 1, MAV_CMD_COMPONENT_ARM_DISARM,
                              0, 1., NAN, NAN, NAN, NAN, NAN, NAN);
-    auto ack = link->receive<COMMAND_ACK>();
+    auto ack = link->receive<COMMAND_ACK>(1, 1);
     EXPECT_EQ(ack.result, MAV_RESULT_ACCEPTED);
 
     link->send<COMMAND_LONG>(1, 1, MAV_CMD_COMPONENT_ARM_DISARM,
                              0, 0.f, NAN, NAN, NAN, NAN, NAN, NAN);
-    ack = link->receive<COMMAND_ACK>();
+    ack = link->receive<COMMAND_ACK>(1, 1);
     EXPECT_EQ(ack.result, MAV_RESULT_ACCEPTED);
 }
 

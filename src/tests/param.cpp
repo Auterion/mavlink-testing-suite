@@ -31,26 +31,26 @@ TEST_F(Params, ParamReadWriteInteger) {
 
     // Read current value
     link->send<PARAM_REQUEST_READ>(1, 1, param_id.c_str(), -1);
-    auto r1 = link->receive<PARAM_VALUE>();
+    auto r1 = link->receive<PARAM_VALUE>(1, 1);
     EXPECT_EQ(paramIdString(r1.param_id), param_id) << "Returned param ID does not match requested param ID";
     EXPECT_EQ(floatUnpack<int32_t>(r1.param_value), default_value) << "Returned value for param " << param_id << " does not have configured default value";
     EXPECT_EQ(r1.param_type, MAV_PARAM_TYPE_INT32) << "Returned param type is wrong";
 
     // Write new value
     link->send<PARAM_SET>(1, 1, param_id.c_str(), floatPack(change_value), MAV_PARAM_TYPE_INT32);
-    auto r2 = link->receive<PARAM_VALUE>();
+    auto r2 = link->receive<PARAM_VALUE>(1, 1);
     EXPECT_EQ(paramIdString(r2.param_id), param_id) << "Returned param ID does not match requested param ID";
 
     // Re-read new value
     link->send<PARAM_REQUEST_READ>(1, 1, param_id.c_str(), -1);
-    auto r3 = link->receive<PARAM_VALUE>();
+    auto r3 = link->receive<PARAM_VALUE>(1, 1);
     EXPECT_EQ(paramIdString(r3.param_id), param_id) << "Returned param ID does not match requested param ID";
     EXPECT_EQ(floatUnpack<int32_t>(r3.param_value), change_value) << "Returned value for param " << param_id << " is not changed value";
     EXPECT_EQ(r3.param_type, MAV_PARAM_TYPE_INT32) << "Returned param type is wrong";
 
     // Restore default value
     link->send<PARAM_SET>(1, 1, param_id.c_str(), floatPack(default_value), MAV_PARAM_TYPE_INT32);
-    auto r4 = link->receive<PARAM_VALUE>();
+    auto r4 = link->receive<PARAM_VALUE>(1, 1);
     EXPECT_EQ(paramIdString(r4.param_id), param_id) << "Returned param ID does not match requested param ID";
 }
 
@@ -65,26 +65,26 @@ TEST_F(Params, ParamReadWriteFloat) {
 
     // Read current value
     link->send<PARAM_REQUEST_READ>(1, 1, param_id.c_str(), -1);
-    auto r1 = link->receive<PARAM_VALUE>();
+    auto r1 = link->receive<PARAM_VALUE>(1, 1);
     EXPECT_EQ(paramIdString(r1.param_id), param_id) << "Returned param ID does not match requested param ID";
     EXPECT_EQ(floatUnpack<float>(r1.param_value), default_value) << "Returned value for param " << param_id << " does not have configured default value";
     EXPECT_EQ(r1.param_type, MAV_PARAM_TYPE_REAL32) << "Returned param type is wrong";
 
     // Write new value
     link->send<PARAM_SET>(1, 1, param_id.c_str(), floatPack(change_value), MAV_PARAM_TYPE_REAL32);
-    auto r2 = link->receive<PARAM_VALUE>();
+    auto r2 = link->receive<PARAM_VALUE>(1, 1);
     EXPECT_EQ(paramIdString(r2.param_id), param_id) << "Returned param ID does not match requested param ID";
 
     // Re-read new value
     link->send<PARAM_REQUEST_READ>(1, 1, param_id.c_str(), -1);
-    auto r3 = link->receive<PARAM_VALUE>();
+    auto r3 = link->receive<PARAM_VALUE>(1, 1);
     EXPECT_EQ(paramIdString(r3.param_id), param_id) << "Returned param ID does not match requested param ID";
     EXPECT_EQ(floatUnpack<float>(r3.param_value), change_value) << "Returned value for param " << param_id << " is not changed value";
     EXPECT_EQ(r3.param_type, MAV_PARAM_TYPE_REAL32) << "Returned param type is wrong";
 
     // Restore default value
     link->send<PARAM_SET>(1, 1, param_id.c_str(), floatPack(default_value), MAV_PARAM_TYPE_REAL32);
-    auto r4 = link->receive<PARAM_VALUE>();
+    auto r4 = link->receive<PARAM_VALUE>(1, 1);
     EXPECT_EQ(paramIdString(r4.param_id), param_id) << "Returned param ID does not match requested param ID";
 }
 
@@ -98,7 +98,7 @@ TEST_F(Params, ParamListAll) {
 
     std::set<std::string> received_param_ids;
     do {
-        auto r = link->receive<PARAM_VALUE>();
+        auto r = link->receive<PARAM_VALUE>(1, 1);
         count = r.param_count;
         // The _HASH_CHECK param does not count towards the total count
         if (paramIdString(r.param_id) != "_HASH_CHECK") {
@@ -113,7 +113,7 @@ TEST_F(Params, ParamListAll) {
             // we expect this to time out.
             // if it does not (we receive another param), it is only okay if we already have
             // that param
-            auto extra = link->receive<PARAM_VALUE>();
+            auto extra = link->receive<PARAM_VALUE>(1, 1);
             if (received_param_ids.find(paramIdString(extra.param_id)) == received_param_ids.end()) {
                 FAIL() << "Received more params. Extra param " << paramIdString(extra.param_id);
             }

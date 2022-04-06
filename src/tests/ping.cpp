@@ -30,9 +30,9 @@ TEST_F(Ping, PingPong) {
     }
     // broadcast systemid, componentid
     link->send<PING>(micros(), 0, 0, 0);
-    auto res = link->receive<PING>();
+    auto res = link->receive<PING>(1, 1);
     EXPECT_EQ(res.seq, 0);
     link->send<PING>(micros(), 1, 0, 0);
-    res = link->receive<PING>();
+    res = link->receive<PING>(1, 1);
     EXPECT_EQ(res.seq, 1);
 }

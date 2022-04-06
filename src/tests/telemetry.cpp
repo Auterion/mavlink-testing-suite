@@ -27,11 +27,11 @@ protected:
     template<int MSG>
     double measureRate(int n_samples) {
         assert(n_samples > 1);
-        link->flush<MSG>();
+        link->flush<MSG>(1, 1);
         uint64_t last_received = 0;
         uint64_t total_time = 0;
         for (int i=0; i<n_samples; i++) {
-            link->template receive<MSG>(5000);
+            link->template receive<MSG>(1, 1, 5000);
             uint64_t now = micros();
             if (last_received != 0) {
                 total_time += (now - last_received);
