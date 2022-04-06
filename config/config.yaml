@@ -3,6 +3,9 @@ ParamReadWriteInteger:
   default_value: 0
   change_value: 1
 
+Telemetry:
+  sim_factor: 1
+
 ParamReadWriteFloat:
   param_id: MPC_ACC_DOWN_MAX
   default_value: 10.0
