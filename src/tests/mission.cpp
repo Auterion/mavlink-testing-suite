@@ -141,15 +141,10 @@ TEST_F(Mission, SetCurrentItem) {
     // MISSION_CURRENT is potentially sent at high rate. It could be some
     // messages until we observe the change, so we observe the next 10 messages
     const int OBSERVE_N = 10;
-    for (int i=0; i<OBSERVE_N; i++) {
-        auto curr = link->receive<MISSION_CURRENT>(1, 1);
-        if (curr.seq == 2) {
-            break;
-        }
-        if (i == OBSERVE_N-1) {
-            FAIL() << "MISSION_CURRENT sequence not changed to 2";
-        }
-    }
+
+    EXPECT_TRUE(link->expectCondition<MISSION_CURRENT>(1, 1, OBSERVE_N, 500, [](auto curr){
+       return curr.seq == 2;
+    }));
     clearAll();
 }
 
