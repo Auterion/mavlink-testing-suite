@@ -42,11 +42,13 @@ Mission:
     skip: false
   UploadAndDownload:
     skip: false
-  SetCurrentItem:
+  UploadTakeoffLoiterMission:
     skip: false
 
 MissionSDK:
   UploadDownloadCompare:
+    skip: false
+  UploadTakeoffLoiterMission:
     skip: false
 
 Command:

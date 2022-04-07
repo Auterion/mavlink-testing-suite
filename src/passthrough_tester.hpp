@@ -4,6 +4,7 @@
 #include <map>
 #include <list>
 #include <mutex>
+#include <functional>
 
 #include <utility>
 #include "passthrough_messages.hpp"
@@ -90,6 +91,26 @@ public:
     template<int MSG>
     typename msg_helper<MSG>::decode_type receive(uint8_t src_sysid, uint8_t src_compid) {
         return receive<MSG>(src_sysid, src_compid, 100);
+    }
+
+    /**
+     * Checks at most observe_n messages of the given type from the given system and component.
+     * As soon as the condition turns true, returns true, otherwise false
+     */
+    template<int MSG>
+    bool expectCondition(uint8_t src_sysid, uint8_t src_compid, int observe_n, int inidividual_timeout,
+                         const std::function<bool(const typename msg_helper<MSG>::decode_type&)> &condition) {
+        flush<MSG>(src_sysid, src_compid);
+        for (int i=0; i<observe_n; i++) {
+            auto curr = receive<MSG>(src_sysid, src_compid, inidividual_timeout);
+            if (condition(curr)) {
+                return true;
+            }
+            if (i == observe_n-1) {
+                return false;
+            }
+        }
+        return false;
     }
 
     template<int MSG>
