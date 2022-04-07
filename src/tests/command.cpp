@@ -5,18 +5,16 @@ using namespace MavlinkTestingSuite;
 class Command : public ::testing::Test {
 protected:
     const std::shared_ptr<PassthroughTester> link;
-    const YAML::Node config;
 
     Command() :
-          link(Environment::getInstance()->getPassthroughTester()),
-          config(Environment::getInstance()->getConfig()) {
+          link(Environment::getInstance()->getPassthroughTester()) {
         link->flushAll();
     }
 };
 
 TEST_F(Command, RequestMessage) {
-    auto cfg = config["Command"]["RequestMessage"];
-    if (cfg["skip"].as<bool>()) {
+    auto conf = Environment::getInstance()->getConfig({"Command", "RequestMessage"});
+    if (!conf || conf["skip"].as<bool>(false)) {
         GTEST_SKIP();
     }
     // make sure there is no PROTOCOL_VERSION being published
@@ -35,8 +33,8 @@ TEST_F(Command, RequestMessage) {
 }
 
 TEST_F(Command, RequestProtocolVersion) {
-    auto cfg = config["Command"]["RequestProtocolVersion"];
-    if (cfg["skip"].as<bool>()) {
+    auto conf = Environment::getInstance()->getConfig({"Command", "RequestProtocolVersion"});
+    if (!conf || conf["skip"].as<bool>(false)) {
         GTEST_SKIP();
     }
     // make sure there is no PROTOCOL_VERSION being published
@@ -55,8 +53,8 @@ TEST_F(Command, RequestProtocolVersion) {
 }
 
 TEST_F(Command, RequestAutopilotCapabilities) {
-    auto cfg = config["Command"]["RequestAutopilotCapabilities"];
-    if (cfg["skip"].as<bool>()) {
+    auto conf = Environment::getInstance()->getConfig({"Command", "RequestAutopilotCapabilities"});
+    if (!conf || conf["skip"].as<bool>(false)) {
         GTEST_SKIP();
     }
     // make sure there is no PROTOCOL_VERSION being published

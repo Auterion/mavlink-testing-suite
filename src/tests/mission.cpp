@@ -18,7 +18,7 @@ protected:
 
     Mission() :
           link(Environment::getInstance()->getPassthroughTester()),
-          config(Environment::getInstance()->getConfig()) {
+          config(Environment::getInstance()->getConfig({"Mission"})) {
         link->flushAll();
     }
 
@@ -30,8 +30,8 @@ protected:
     // Dummy coordinate generator
     int_coord_t missionCoordGen(int seq) {
         float altitude = 10.F + (float)seq;
-        double latitude = config["Mission"]["home_lat"].as<double>() + (double)seq * 1e-5;
-        double longitude = config["Mission"]["home_lon"].as<double>();
+        double latitude = config["home_lat"].as<double>() + (double)seq * 1e-5;
+        double longitude = config["home_lon"].as<double>();
         return {
             static_cast<int32_t>(latitude * 1e7),
             static_cast<int32_t>(longitude * 1e7),
@@ -46,8 +46,8 @@ protected:
         static constexpr int lat_weights[] = {-1, -1, 1, 1};
         static constexpr int lon_weights[] = {-1, 1, 1, -1};
 
-        double latitude = config["Mission"]["home_lat"].as<double>() + lat_weights[seq] * 1e-5;
-        double longitude = config["Mission"]["home_lon"].as<double>() + lon_weights[seq] * 1e-5;
+        double latitude = config["home_lat"].as<double>() + lat_weights[seq] * 1e-5;
+        double longitude = config["home_lon"].as<double>() + lon_weights[seq] * 1e-5;
         return {
             static_cast<int32_t>(latitude * 1e7),
             static_cast<int32_t>(longitude * 1e7),
@@ -108,8 +108,8 @@ protected:
 };
 
 TEST_F(Mission, Upload) {
-    auto cfg = config["Mission"]["Upload"];
-    if (cfg["skip"].as<bool>()) {
+    auto conf = Environment::getInstance()->getConfig({"Mission", "Upload"});
+    if (!conf || conf["skip"].as<bool>(false)) {
         GTEST_SKIP();
     }
     clearAll();
@@ -118,8 +118,8 @@ TEST_F(Mission, Upload) {
 }
 
 TEST_F(Mission, UploadAndDownload) {
-    auto cfg = config["Mission"]["UploadAndDownload"];
-    if (cfg["skip"].as<bool>()) {
+    auto conf = Environment::getInstance()->getConfig({"Mission", "UploadAndDownload"});
+    if (!conf || conf["skip"].as<bool>(false)) {
         GTEST_SKIP();
     }
     const int N_ITEMS = 10;
@@ -130,8 +130,8 @@ TEST_F(Mission, UploadAndDownload) {
 }
 
 TEST_F(Mission, SetCurrentItem) {
-    auto cfg = config["Mission"]["SetCurrentItem"];
-    if (cfg["skip"].as<bool>()) {
+    auto conf = Environment::getInstance()->getConfig({"Mission", "SetCurrentItem"});
+    if (!conf || conf["skip"].as<bool>(false)) {
         GTEST_SKIP();
     }
     uploadMission();
@@ -155,8 +155,8 @@ TEST_F(Mission, SetCurrentItem) {
 
 
 TEST_F(Mission, UploadPolygonFence) {
-    auto cfg = config["Mission"]["UploadPolygonFence"];
-    if (cfg["skip"].as<bool>()) {
+    auto conf = Environment::getInstance()->getConfig({"Mission", "UploadPolygonFence"});
+    if (!conf || conf["skip"].as<bool>(false)) {
         GTEST_SKIP();
     }
     EXPECT_TRUE(hasCapability(MAV_PROTOCOL_CAPABILITY_MISSION_FENCE)) << "MISSION_FENCE capability not reported";
@@ -202,8 +202,8 @@ TEST_F(Mission, UploadPolygonFence) {
 }
 
 TEST_F(Mission, UploadCircularFence) {
-    auto cfg = config["Mission"]["UploadCircularFence"];
-    if (cfg["skip"].as<bool>()) {
+    auto conf = Environment::getInstance()->getConfig({"Mission", "UploadCircularFence"});
+    if (!conf || conf["skip"].as<bool>(false)) {
         GTEST_SKIP();
     }
     EXPECT_TRUE(hasCapability(MAV_PROTOCOL_CAPABILITY_MISSION_FENCE)) << "MISSION_FENCE capability not reported";
@@ -228,8 +228,8 @@ TEST_F(Mission, UploadCircularFence) {
 }
 
 TEST_F(Mission, UploadRallyPoints) {
-    auto cfg = config["Mission"]["UploadRallyPoints"];
-    if (cfg["skip"].as<bool>()) {
+    auto conf = Environment::getInstance()->getConfig({"Mission", "UploadRallyPoints"});
+    if (!conf || conf["skip"].as<bool>(false)) {
         GTEST_SKIP();
     }
     EXPECT_TRUE(hasCapability(MAV_PROTOCOL_CAPABILITY_MISSION_RALLY)) << "MISSION_RALLY capability not reported";

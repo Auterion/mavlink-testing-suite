@@ -14,18 +14,16 @@ inline uint64_t micros() {
 class Ping : public ::testing::Test {
 protected:
     const std::shared_ptr<PassthroughTester> link;
-    const YAML::Node config;
 
     Ping() :
-          link(Environment::getInstance()->getPassthroughTester()),
-          config(Environment::getInstance()->getConfig()) {
+          link(Environment::getInstance()->getPassthroughTester()) {
         link->flushAll();
     }
 };
 
 TEST_F(Ping, PingPong) {
-    auto cfg = config["Ping"]["PingPong"];
-    if (cfg["skip"].as<bool>()) {
+    auto conf = Environment::getInstance()->getConfig({"Ping", "PingPong"});
+    if (!conf || conf["skip"].as<bool>(false)) {
         GTEST_SKIP();
     }
     // broadcast systemid, componentid

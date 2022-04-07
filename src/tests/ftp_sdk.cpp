@@ -28,9 +28,9 @@ protected:
 
     FTPSDK() :
           ftp(Environment::getInstance()->getFtpPlugin()),
-          config(Environment::getInstance()->getConfig()),
-          file_size(config["FTP"]["file_size"].as<size_t>()),
-          target_path(config["FTP"]["target_path"].as<std::string>())
+          config(Environment::getInstance()->getConfig({"FTP"})),
+          file_size(config["file_size"].as<size_t>()),
+          target_path(config["target_path"].as<std::string>())
     {
         initRandomData();
         writeTempFiles();
@@ -110,8 +110,8 @@ protected:
 
 
 TEST_F(FTPSDK, UploadCompareDownloadCompare) {
-    auto cfg = config["FTP"]["UploadCompareDownloadCompare"];
-    if (cfg["skip"].as<bool>()) {
+    auto conf = Environment::getInstance()->getConfig({"FTPSDK", "UploadCompareDownloadCompare"});
+    if (!conf || conf["skip"].as<bool>(false)) {
         GTEST_SKIP();
     }
 

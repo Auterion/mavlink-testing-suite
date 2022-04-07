@@ -7,11 +7,9 @@ using namespace MavlinkTestingSuite;
 class Params : public ::testing::Test {
 protected:
     const std::shared_ptr<PassthroughTester> link;
-    const YAML::Node config;
 
     Params() : 
-    link(Environment::getInstance()->getPassthroughTester()), 
-    config(Environment::getInstance()->getConfig()) {
+    link(Environment::getInstance()->getPassthroughTester()) {
         link->flushAll();
     }
 };
@@ -21,8 +19,8 @@ std::string paramIdString(const char* param_id) {
 }
 
 TEST_F(Params, ParamReadWriteInteger) {
-    auto conf = config["Param"]["ParamReadWriteInteger"];
-    if (conf["skip"].as<bool>()) {
+    auto conf = Environment::getInstance()->getConfig({"Param", "ParamReadWriteInteger"});
+    if (!conf || conf["skip"].as<bool>(false)) {
         GTEST_SKIP();
     }
     auto param_id = conf["param_id"].as<std::string>();
@@ -55,8 +53,8 @@ TEST_F(Params, ParamReadWriteInteger) {
 }
 
 TEST_F(Params, ParamReadWriteFloat) {
-    auto conf = config["Param"]["ParamReadWriteFloat"];
-    if (conf["skip"].as<bool>()) {
+    auto conf = Environment::getInstance()->getConfig({"Param", "ParamReadWriteFloat"});
+    if (!conf || conf["skip"].as<bool>(false)) {
         GTEST_SKIP();
     }
     auto param_id = conf["param_id"].as<std::string>();
@@ -89,8 +87,8 @@ TEST_F(Params, ParamReadWriteFloat) {
 }
 
 TEST_F(Params, ParamListAll) {
-    auto conf = config["Param"]["ParamReadWriteFloat"];
-    if (conf["skip"].as<bool>()) {
+    auto conf = Environment::getInstance()->getConfig({"Param", "ParamListAll"});
+    if (!conf || conf["skip"].as<bool>(false)) {
         GTEST_SKIP();
     }
     link->send<PARAM_REQUEST_LIST>(1, 1);

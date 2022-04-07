@@ -13,7 +13,7 @@ protected:
 
     MissionSDK() :
     mission(Environment::getInstance()->getMissionPlugin()),
-    config(Environment::getInstance()->getConfig()) {}
+    config(Environment::getInstance()->getConfig({"Mission"})) {}
 
 
     mavsdk::Mission::MissionItem makeMissionItem(double latitude_deg, double longitude_deg,
@@ -31,8 +31,8 @@ protected:
 
         for (int i = 0; i < 15; ++i) {
             float altitude = 10.F + (float)i;
-            double latitude = config["Mission"]["home_lat"].as<double>() + (double)i * 1e-5;
-            double longitude = config["Mission"]["home_lon"].as<double>();
+            double latitude = config["home_lat"].as<double>() + (double)i * 1e-5;
+            double longitude = config["home_lon"].as<double>();
             plan.mission_items.push_back(makeMissionItem(latitude, longitude, altitude));
         }
         return plan;
@@ -43,8 +43,8 @@ protected:
 
 
 TEST_F(MissionSDK, UploadDownloadCompare) {
-    auto cfg = config["MissionSDK"]["UploadDownloadCompare"];
-    if (cfg["skip"].as<bool>()) {
+    auto conf = Environment::getInstance()->getConfig({"MissionSDK", "UploadDownloadCompare"});
+    if (!conf || conf["skip"].as<bool>(false)) {
         GTEST_SKIP();
     }
     const auto plan = assembleMissionPlan();

@@ -39,7 +39,7 @@ private:
     inline static Environment* _instance;
 
     const std::string _connection_url;
-    const YAML::Node _config;
+    YAML::Node _config;
     std::shared_ptr<mavsdk::Mavsdk> _mavsdk;
     std::shared_ptr<mavsdk::System> _system;
     std::shared_ptr<mavsdk::MavlinkPassthrough> _mavlinkPassthrough;
@@ -142,8 +142,16 @@ public:
         return _tester;
     }
 
-    const YAML::Node& getConfig() const {
-        return _config;
+    const YAML::Node getConfig(const std::vector<std::string> &path) {
+        YAML::Node node = _config;
+        for (const auto& key : path) {
+            if (!node) {
+                printf("KEY NOT IN %s\n", key.c_str());
+                return node;
+            }
+            node.reset(node[key]);
+        }
+        return node;
     }
 
     const mavsdk::System::AutopilotVersion& getAutopilotVersion() const {

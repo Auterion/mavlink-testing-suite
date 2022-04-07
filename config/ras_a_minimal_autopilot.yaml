@@ -1,19 +1,6 @@
-Param:
-  ParamReadWriteInteger:
-    skip: true
-    param_id: SYS_HITL
-    default_value: 0
-    change_value: 1
-
-  ParamReadWriteFloat:
-    skip: true
-    param_id: MPC_ACC_DOWN_MAX
-    default_value: 10.0
-    change_value: 3.0
-
-  ParamListAll:
-    skip: true
-
+Arm:
+  ArmDisarm:
+    skip: false
 
 Telemetry:
   sim_factor: 1
@@ -44,24 +31,6 @@ Telemetry:
   HaveEstimatorStatus:
     skip: false
     minimal_rate: 1
-  HaveAttitudeQuaternion:
-    skip: true
-    minimal_rate: 15
-  HaveAttitudeTarget:
-    skip: true
-    minimal_rate: 0
-  HaveHomePosition:
-    skip: true
-    minimal_rate: 0
-  HaveLocalPosition:
-    skip: true
-    minimal_rate: 0
-  HavePositionTarget:
-    skip: true
-    minimal_rate: 0
-  HaveVFRHUD:
-    skip: true
-    minimal_rate: 0
 
 Mission:
   home_lat: 45.4671160
@@ -75,27 +44,10 @@ Mission:
     skip: false
   SetCurrentItem:
     skip: false
-  UploadPolygonFence:
-    skip: true
-  UploadCircularFence:
-    skip: true
-  UploadRallyPoints:
-    skip: true
 
 MissionSDK:
   UploadDownloadCompare:
     skip: false
-
-
-FTP:
-  file_size: 10000
-  target_path: "/fs/microsd/"
-  UploadCompareDownloadCompare:
-    skip: true
-
-Ping:
-  PingPong:
-    skip: true
 
 Command:
   RequestMessage:

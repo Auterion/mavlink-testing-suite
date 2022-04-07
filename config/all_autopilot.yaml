@@ -14,6 +14,9 @@ Param:
   ParamListAll:
     skip: false
 
+Arm:
+  ArmDisarm:
+    skip: false
 
 Telemetry:
   sim_factor: 1

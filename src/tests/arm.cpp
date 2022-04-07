@@ -5,16 +5,18 @@ using namespace MavlinkTestingSuite;
 class Arm : public ::testing::Test {
 protected:
     const std::shared_ptr<PassthroughTester> link;
-    const YAML::Node config;
 
     Arm() :
-          link(Environment::getInstance()->getPassthroughTester()),
-          config(Environment::getInstance()->getConfig()) {
+          link(Environment::getInstance()->getPassthroughTester()) {
         link->flushAll();
     }
 };
 
 TEST_F(Arm, ArmDisarm) {
+    auto conf = Environment::getInstance()->getConfig({"Arm", "ArmDisarm"});
+    if (!conf || conf["skip"].as<bool>(false)) {
+        GTEST_SKIP();
+    }
     link->send<COMMAND_LONG>(1, 1, MAV_CMD_COMPONENT_ARM_DISARM,
                              0, 1., NAN, NAN, NAN, NAN, NAN, NAN);
     auto ack = link->receive<COMMAND_ACK>(1, 1);
