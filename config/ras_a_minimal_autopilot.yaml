@@ -56,5 +56,18 @@ Command:
     skip: false
   RequestProtocolVersion:
     skip: false
-  RequestAutopilotCapabilities:
+  RequestAutopilotC  UploadTakeoffLoiterMission:
+    skip: falseapabilities:
     skip: false
+  RequestAltitude:
+    skip: false
+  RequestPoiReport:
+    skip: false
+  RequestHomePosition:
+    skip: false  UploadTakeoffLoiterMission:
+    skip: false
+  RequestFlightInformation:
+    skip: false
+  SetMessageInterval:
+    skip: false
+

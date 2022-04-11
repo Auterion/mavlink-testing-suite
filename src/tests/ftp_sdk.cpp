@@ -28,7 +28,7 @@ protected:
 
     FTPSDK() :
           ftp(Environment::getInstance()->getFtpPlugin()),
-          config(Environment::getInstance()->getConfig({"FTP"})),
+          config(Environment::getInstance()->getConfig({"FTPSDK"})),
           file_size(config["file_size"].as<size_t>()),
           target_path(config["target_path"].as<std::string>())
     {

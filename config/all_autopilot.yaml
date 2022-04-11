@@ -84,13 +84,15 @@ Mission:
     skip: false
   UploadRallyPoints:
     skip: false
+  UploadTakeoffLoiterMission:
+    skip: false
 
 MissionSDK:
   UploadDownloadCompare:
     skip: false
 
 
-FTP:
+FTPSDK:
   file_size: 10000
   target_path: "/fs/microsd/"
   UploadCompareDownloadCompare:
@@ -106,4 +108,14 @@ Command:
   RequestProtocolVersion:
     skip: false
   RequestAutopilotCapabilities:
+    skip: false
+  RequestAltitude:
+    skip: false
+  RequestPoiReport:
+    skip: false
+  RequestHomePosition:
+    skip: false
+  RequestFlightInformation:
+    skip: false
+  SetMessageInterval:
     skip: false
