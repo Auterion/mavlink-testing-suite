@@ -265,3 +265,62 @@ TEST_F(Mission, UploadTakeoffLoiterMission) {
     auto ack = link->receive<MISSION_ACK>(1, 1);
     EXPECT_EQ(ack.type, MAV_MISSION_ACCEPTED) << "Mission not accepted" << std::endl;
 }
+
+TEST_F(Mission, UploadTakeoffLandMission) {
+    auto conf = Environment::getInstance()->getConfig({"Mission", "UploadTakeoffLandMission"});
+    if (!conf || conf["skip"].as<bool>(false)) {
+        GTEST_SKIP();
+    }
+
+    link->send<MISSION_COUNT>(1, 1, 2, MAV_MISSION_TYPE_MISSION);
+    auto req = link->receive<MISSION_REQUEST_INT>(1, 1);
+    EXPECT_EQ(req.seq, 0);
+    auto c = missionCoordGen(0);
+
+    link->send<MISSION_ITEM_INT>(1, 1, 0, MAV_FRAME_GLOBAL_INT, MAV_CMD_NAV_TAKEOFF, 0, 1,
+                                 0.f, 1.f, 0.f, NAN,
+                                 c.latitude, c.longitude, c.altitude, MAV_MISSION_TYPE_MISSION);
+    req = link->receive<MISSION_REQUEST_INT>(1, 1);
+    EXPECT_EQ(req.seq, 1);
+
+    c = missionCoordGen(1);
+    link->send<MISSION_ITEM_INT>(1, 1, 1, MAV_FRAME_GLOBAL_INT, MAV_CMD_NAV_LAND, 0, 1,
+                                 0.f, 0.f, 0.f, NAN,
+                                 c.latitude, c.longitude, c.altitude, MAV_MISSION_TYPE_MISSION);
+
+    auto ack = link->receive<MISSION_ACK>(1, 1);
+    EXPECT_EQ(ack.type, MAV_MISSION_ACCEPTED) << "Mission not accepted" << std::endl;
+}
+
+TEST_F(Mission, UploadTakeoffChangeSpeedReturn) {
+    auto conf = Environment::getInstance()->getConfig({"Mission", "UploadTakeoffReturn"});
+    if (!conf || conf["skip"].as<bool>(false)) {
+        GTEST_SKIP();
+    }
+
+    link->send<MISSION_COUNT>(1, 1, 3, MAV_MISSION_TYPE_MISSION);
+    auto req = link->receive<MISSION_REQUEST_INT>(1, 1);
+    EXPECT_EQ(req.seq, 0);
+    auto c = missionCoordGen(0);
+
+    link->send<MISSION_ITEM_INT>(1, 1, 0, MAV_FRAME_GLOBAL_INT, MAV_CMD_NAV_TAKEOFF, 0, 1,
+                                 0.f, 1.f, 0.f, NAN,
+                                 c.latitude, c.longitude, c.altitude, MAV_MISSION_TYPE_MISSION);
+    req = link->receive<MISSION_REQUEST_INT>(1, 1);
+    EXPECT_EQ(req.seq, 1);
+
+    link->send<MISSION_ITEM_INT>(1, 1, 1, MAV_FRAME_MISSION, MAV_CMD_DO_CHANGE_SPEED, 0, 1,
+                                 1.f, 5.f, -1.f,
+                                 NAN, UINT32_MAX, UINT32_MAX, UINT32_MAX, MAV_MISSION_TYPE_MISSION);
+
+    req = link->receive<MISSION_REQUEST_INT>(1, 1);
+    EXPECT_EQ(req.seq, 2);
+
+    c = missionCoordGen(1);
+    link->send<MISSION_ITEM_INT>(1, 1, 2, MAV_FRAME_MISSION, MAV_CMD_NAV_RETURN_TO_LAUNCH, 0, 1,
+                                 NAN, NAN, NAN, NAN,
+                                 UINT32_MAX, UINT32_MAX, UINT32_MAX, MAV_MISSION_TYPE_MISSION);
+
+    auto ack = link->receive<MISSION_ACK>(1, 1);
+    EXPECT_EQ(ack.type, MAV_MISSION_ACCEPTED) << "Mission not accepted" << std::endl;
+}

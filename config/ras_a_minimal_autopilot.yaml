@@ -44,6 +44,10 @@ Mission:
     skip: false
   UploadTakeoffLoiterMission:
     skip: false
+  UploadTakeoffLandMission:
+    skip: false
+  UploadTakeoffReturn:
+    skip: false
 
 MissionSDK:
   UploadDownloadCompare:
@@ -56,15 +60,13 @@ Command:
     skip: false
   RequestProtocolVersion:
     skip: false
-  RequestAutopilotC  UploadTakeoffLoiterMission:
-    skip: falseapabilities:
+  RequestAutopilotCapabilities:
     skip: false
   RequestAltitude:
     skip: false
   RequestPoiReport:
     skip: false
   RequestHomePosition:
-    skip: false  UploadTakeoffLoiterMission:
     skip: false
   RequestFlightInformation:
     skip: false

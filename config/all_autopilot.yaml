@@ -86,6 +86,10 @@ Mission:
     skip: false
   UploadTakeoffLoiterMission:
     skip: false
+  UploadTakeoffLandMission:
+    skip: false
+  UploadTakeoffReturn:
+    skip: false
 
 MissionSDK:
   UploadDownloadCompare:
